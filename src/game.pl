@@ -1,0 +1,3 @@
+:- ['interface.pl',
+	'board.pl'
+	].
