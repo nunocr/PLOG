@@ -94,6 +94,10 @@ printBoard :- freshBoard(X),
 			  printBoardLine,
 			  printBoard(X, 1).
 			  
+printBoard(Board) :- printBoardTop,
+			  printBoardLine,
+			  printBoard(Board, 1).
+			  
 %Prints the early game Board.			  
 printEarlyBoard :- earlyGameBoard(X),
 				   printBoardTop,
