@@ -89,7 +89,8 @@ printBoard([L|Ls], LineN) :-
 %%%%%%%%%%%%%%%%%%%
 
 %Prints an entire fresh Board.			   
-printBoard :- freshBoard(X),
+printBoard :- %freshBoard(X),
+			  midGameBoard(X),
 			  printBoardTop,
 			  printBoardLine,
 			  printBoard(X, 1).

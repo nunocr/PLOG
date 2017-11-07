@@ -28,3 +28,7 @@ teste :-
 	freshBoard(X),
 	printBoard(X).
 	
+getBoardPiece(Board, Row, Col, Val) :-  
+	nth1(Row, Mat, ARow), 
+	nth1(Col, ARow, Val).
+	

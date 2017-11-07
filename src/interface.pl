@@ -25,8 +25,8 @@ mainMenuScreen,
 read(Option),
 (
 	Option =:= 1 -> playMenu;
-	Option =:= 2 -> clearScreen, write('how to play menu'), nl;
-	Option =:= 3 -> clearScreen, write('about menu'), nl;
+	Option =:= 2 -> howToPlayMenu;
+	Option =:= 3 -> aboutMenu;
 	Option =:= 4;
 	
 	mainMenu
@@ -116,4 +116,64 @@ read(Option),
 	Option =:= 1 -> botDifficultyMenu;
 	
 	difficultyMenu
+).
+
+
+howToPlayScreen :-
+clearScreen,
+write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl,
+write('||                          Go-Ro-Go                              ||'), nl,
+write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl,
+write('||                                                                ||'), nl,
+write('||                         How to play                            ||'), nl,
+write('||                                                                ||'), nl,
+write('|| The game is played with 25 pieces: 10 whites, 10 blacks and 5  ||'), nl,
+write('|| Henge. Henge pieces take the color of the pieces of the player ||'), nl,
+write('|| that is currently playing. Whites make the first move: put the ||'), nl,
+write('|| first Henge piece on the board. The player that eats the most  ||'), nl,
+write('|| enemy pieces wins. If a player has no valid moves, he loses.   ||'), nl,
+write('||                                                                ||'), nl,
+write('||                  1. Back to Main Menu                          ||'), nl,
+write('||                                                                ||'), nl,
+write('||                                                                ||'), nl,
+write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl.
+
+howToPlayMenu :-
+clearScreen,
+howToPlayScreen,
+read(Option),
+(
+	Option =:= 1 -> mainMenu;
+	
+	howToPlayMenu
+).
+
+
+aboutScreen :-
+clearScreen,
+write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl,
+write('||                          Go-Ro-Go                              ||'), nl,
+write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl,
+write('||                                                                ||'), nl,
+write('||                            About                               ||'), nl,
+write('||                                                                ||'), nl,
+write('||  A simplified game of Go featuring Henge pieces (pronounced)   ||'), nl,
+write('||  "Han-gay". Tested in the Tokyo Game Market in December, 2016  ||'), nl,
+write('||                      to universal aclaim.                      ||'), nl,
+write('||                                                                ||'), nl,
+write('||                   Original game by Doug Masiel                 ||'), nl,
+write('||                                                                ||'), nl,
+write('||                      1. Back to Main Menu                      ||'), nl,
+write('||                                                                ||'), nl,
+write('||                                                                ||'), nl,
+write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl.
+
+aboutMenu :-
+clearScreen,
+aboutScreen,
+read(Option),
+(
+	Option =:= 1 -> mainMenu;
+	
+	aboutMenu
 ).
