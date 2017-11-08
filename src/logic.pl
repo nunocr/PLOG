@@ -4,14 +4,14 @@ gameLoop(Board, Counter, Player1, Player2) :-
 	Counter < 25 
 	->
 	(
-	get_code(_),
 	clearScreen,
+	printBoard(Board),
+	get_code(_),
 	Counter1 is Counter + 1,
 	write('Current turn: '),
 	write(Counter1), nl,
 	checkTurn(Counter1, Player1, Player2, CurrPlayer),
 	printPlayer(CurrPlayer),
-	printBoard(Board),
 	askPlay(Board, CurrPlayer),
 	gameLoop(Board, Counter1, Player1, Player2)
 	);
@@ -85,9 +85,9 @@ checkTurn(Counter, Player1, Player2, CurrPlayer) :-
 checkBoardBounds(Row, Col) :-
 	checkNumberBounds(Row),
 	checkNumberBounds(Col).
-		
+
 %checks if a number is between 1 and 5
-checkNumberBounds(Number) :- Number > 0, Number =< 5.	
+checkNumberBounds(Number) :- Number > 0, Number =< 5.
 
 %gets a piece from the board, given coordinates	
 getPiece(Board, Row, Col, Val) :-  
