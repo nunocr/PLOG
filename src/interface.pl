@@ -53,7 +53,7 @@ clearScreen,
 playMenuScreen,
 read(Option),
 (
-	Option =:= 1 -> printBoard; %mudar para startGame
+	Option =:= 1 -> startGame; %mudar para startGame
 	Option =:= 2 -> botDifficultyMenu;
 	Option =:= 3 -> botDifficultyMenu;
 	Option =:= 4 -> mainMenu;
