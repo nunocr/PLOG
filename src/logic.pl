@@ -1,8 +1,3 @@
-getValueByIndex(XCoord, YCoord, ValueOut) :-
-	midGameBoard(X),
-	nth1(XCoord, X, BoardRow),
-	nth1(YCoord, BoardRow, ValueOut).
-	
 gameLoop(Board, Counter) :-
 
 	Counter < 25 
@@ -25,10 +20,25 @@ startGame :-
 	gameLoop(X, 0).
 	
 teste :-
-	freshBoard(X),
-	printBoard(X).
+	midGameBoard(Board),
+	printBoard(Board),
+	write('Select Row: '),
+	read(Row),
+	get_code(_),
+	write('Select Column: '),
+	read(Col),
+	get_code(_),
+	getBoardPiece(Board, Row, Col, Val),
+	printBoardPieceInfo(Val).
 	
 getBoardPiece(Board, Row, Col, Val) :-  
-	nth1(Row, Mat, ARow), 
+	nth1(Row, Board, ARow), 
 	nth1(Col, ARow, Val).
 	
+printBoardPieceInfo(Val) :-
+	(
+		Val =:= 0 -> write('That tile is empty.');
+		Val =:= 1 -> write('That tile is occupied by a Black piece.');
+		Val =:= 2 -> write('That tile is occupied by a White piece.');
+		Val =:= 3 -> write('That tile is occupied by a Henge piece.')
+	).
