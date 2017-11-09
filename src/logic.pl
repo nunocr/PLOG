@@ -1,6 +1,26 @@
 %finish condition
 gameLoop(_, 26, _, _) :- mainMenu, !.
 
+%first round henge placing
+gameLoop(Board, -1, Player1, Player2) :-
+
+	clearScreen,
+	printBoard(Board),
+	write('White player has to place the last henge piece available'), nl,
+	
+	repeat,
+	write('Select Row: '),
+	read(Row),
+	get_code(_),
+	write('Select Column: '),
+	read(Col),
+	get_code(_),
+	checkBoard(Board, Row, Col, Player1),
+	!,
+	
+	setPiece(Board, Row, Col, 3, BoardOut),
+	gameLoop(BoardOut, 0, Player1, Player2).
+
 %gameloop predicate
 gameLoop(Board, Counter, Player1, Player2) :-
 
@@ -29,7 +49,7 @@ startGame :-
 	freshBoard(X),
 	createPlayer(white, 10, 2, Player1, human),
 	createPlayer(black, 10, 2, Player2, human),
-	gameLoop(X, 0, Player1, Player2).
+	gameLoop(X, -1, Player1, Player2).
 	
 %creates a player
 createPlayer(Name, Pieces, HengePieces, PlayerInfo, PlayerType) :- 
@@ -69,11 +89,10 @@ askPlay(BoardIn, CurrPlayer, BoardOut, CurrPlayerOut) :-
 	write('Select Column: '),
 	read(Col),
 	get_code(_),
-	checkBoard(BoardIn, Row, Col),
+	checkBoard(BoardIn, Row, Col, CurrPlayer),
 	!,
 	
 	selectPiece(PlayerName, PieceType, PieceToPlace),
-	
 	
 	setPiece(BoardIn, Row, Col, PieceToPlace, BoardOut),
 	removePieceFromPlayer(CurrPlayer, PieceType, CurrPlayerOut).
@@ -82,15 +101,177 @@ readPieceType(1) :- write('Selected normal piece'), nl.
 readPieceType(2) :- write('Selected henge piece'), nl.
 readPieceType(_) :- write('Wrong piece type, please try again!'), nl, !, fail.
 	
-	
 %checks board
-checkBoard(Board, Row, Col) :-
-	checkBoardBounds(Row, Col),
-	checkBoardSpot(Board, Row, Col).
+checkBoard(Board, Row, Col, CurrPlayer) :-
+	checkBoardBounds(Row, Col), !,
+	checkBoardSpot(Board, Row, Col), !,
+	checkBoardSurroundings(Board, Row, Col, CurrPlayer).
 	
 checkBoardSpot(Board, Row, Col) :-
 	getPiece(Board, Row, Col, 0).
+
+checkBoardSpot(_, _, _)	:- write('That coordinate is already occupied by a piece, try again!'), nl, !, fail.
 	
+checkBoardSurroundings(Board, 1, 1, CurrPlayer) :- checkBoardTopLeft(Board, 1, 1, CurrPlayer).
+checkBoardSurroundings(Board, 5, 1, CurrPlayer) :- checkBoardBotLeft(Board, 5, 1, CurrPlayer).
+checkBoardSurroundings(Board, 1, 5, CurrPlayer) :- checkBoardTopRight(Board, 1, 5, CurrPlayer).
+checkBoardSurroundings(Board, 5, 5, CurrPlayer) :- checkBoardBotRight(Board, 5, 5, CurrPlayer).
+checkBoardSurroundings(Board, 1, Col, CurrPlayer) :- checkBoardTop(Board, 1, Col, CurrPlayer).
+checkBoardSurroundings(Board, Row, 5, CurrPlayer) :- checkBoardRight(Board, Row, 5, CurrPlayer).
+checkBoardSurroundings(Board, Row, 1, CurrPlayer) :- checkBoardLeft(Board, Row, 1, CurrPlayer).
+checkBoardSurroundings(Board, Row, Col, CurrPlayer) :- checkBoardMiddle(Board, Row, Col, CurrPlayer).
+
+
+checkBoardMiddle(Board, Row, Col, CurrPlayer) :-
+	nth1(1, CurrPlayer, PlayerName),
+	selectPiece(PlayerName, 1, CurrPlayerPiece),
+	
+	Row > 1, Row < 5,
+	Col > 1, Col < 5,
+	
+	ColRight is Col + 1,
+	ColLeft is Col - 1,
+	RowUp is Row + 1,
+	RowDown is Row - 1, !,
+	
+	getPiece(Board, RowUp, Col, UpperPiece),
+	getPiece(Board, RowDown, Col, BottomPiece),
+	getPiece(Board, Row, ColLeft, LeftPiece),
+	getPiece(Board, Row, ColRight, RightPiece),
+	checkSurroundingPiecesMid(CurrPlayerPiece, UpperPiece, BottomPiece, LeftPiece, RightPiece).
+	
+checkBoardLeft(Board, Row, 1, CurrPlayer) :-
+	nth1(1, CurrPlayer, PlayerName),
+	selectPiece(PlayerName, 1, CurrPlayerPiece),
+	
+	RowUp is Row + 1,
+	RowDown is Row - 1, !,
+	
+	getPiece(Board, RowUp, 1, UpperPiece),
+	getPiece(Board, RowDown, 1, BottomPiece),
+	getPiece(Board, Row, 2, RightPiece),
+	checkSurroundingPiecesSides(CurrPlayerPiece, UpperPiece, BottomPiece, RightPiece).
+	
+checkBoardRight(Board, Row, 5, CurrPlayer) :-
+	nth1(1, CurrPlayer, PlayerName),
+	selectPiece(PlayerName, 1, CurrPlayerPiece),
+	
+	RowUp is Row + 1,
+	RowDown is Row - 1, !,
+	
+	getPiece(Board, RowUp, 1, UpperPiece),
+	getPiece(Board, RowDown, 1, BottomPiece),
+	getPiece(Board, Row, 5, LeftPiece),
+	checkSurroundingPiecesSides(CurrPlayerPiece, UpperPiece, BottomPiece, LeftPiece).
+	
+checkBoardTop(Board, 1, Col, CurrPlayer) :-
+	nth1(1, CurrPlayer, PlayerName),
+	selectPiece(PlayerName, 1, CurrPlayerPiece),
+	
+	ColLeft is Col - 1,
+	ColRight is Col + 1,
+	
+	getPiece(Board, 1, ColLeft, LeftPiece),
+	getPiece(Board, 1, ColRight, RightPiece),
+	getPiece(Board, 2, Col, BottomPiece),
+	checkSurroundingPiecesSides(CurrPlayerPiece, LeftPiece, RightPiece, BottomPiece).
+	
+checkBoardTopLeft(Board, 1, 1, CurrPlayer) :-
+	nth1(1, CurrPlayer, PlayerName),
+	selectPiece(PlayerName, 1, CurrPlayerPiece),
+	
+	getPiece(Board, 1, 2, RightPiece),
+	getPiece(Board, 2, 1, BottomPiece),
+	%write(RightPiece), write(' - '), write(BottomPiece),
+	%readSymbol(RightPiece, X),
+	%readSymbol(BottomPiece, Y),
+	%write(RightPiece), write(' - '), write(X),
+	%write(BottomPiece), write(' - '), write(Y),
+	%get_code(_),
+	checkSurroundingPiecesCorner(CurrPlayerPiece, RightPiece, BottomPiece).
+	
+checkBoardTopRight(Board, 1, 5, CurrPlayer) :-
+	nth1(1, CurrPlayer, PlayerName),
+	selectPiece(PlayerName, 1, CurrPlayerPiece),
+	
+	getPiece(Board, 1, 4, LeftPiece),
+	getPiece(Board, 2, 4, BottomPiece),
+	checkSurroundingPiecesCorner(CurrPlayerPiece, LeftPiece, BottomPiece).
+	
+checkBoardBotLeft(Board, 5, 1, CurrPlayer) :-
+	nth1(1, CurrPlayer, PlayerName),
+	selectPiece(PlayerName, 1, CurrPlayerPiece),
+	
+	getPiece(Board, 5, 2, RightPiece),
+	getPiece(Board, 4, 1, UpperPiece),
+	checkSurroundingPiecesCorner(CurrPlayerPiece, RightPiece, UpperPiece).
+	
+checkBoardBotRight(Board, 5, 5, CurrPlayer) :-
+	nth1(1, CurrPlayer, PlayerName),
+	selectPiece(PlayerName, 1, CurrPlayerPiece),
+	
+	getPiece(Board, 5, 4, LeftPiece),
+	getPiece(Board, 4, 5, UpperPiece),
+	checkSurroundingPiecesCorner(CurrPlayerPiece, LeftPiece, UpperPiece).
+	
+checkSurroundingPiecesMid(1, 2, 2, 2, 2) :- write('That coordinate is surrounded by white pieces!'), nl, !, fail.
+checkSurroundingPiecesMid(1, 3, 2, 2, 2) :- write('That coordinate is surrounded by white pieces!'), nl, !, fail.
+checkSurroundingPiecesMid(1, 2, 3, 2, 2) :- write('That coordinate is surrounded by white pieces!'), nl, !, fail.
+checkSurroundingPiecesMid(1, 2, 2, 3, 2) :- write('That coordinate is surrounded by white pieces!'), nl, !, fail.
+checkSurroundingPiecesMid(1, 2, 2, 2, 3) :- write('That coordinate is surrounded by white pieces!'), nl, !, fail.
+checkSurroundingPiecesMid(1, 3, 3, 2, 2) :- write('That coordinate is surrounded by white pieces!'), nl, !, fail.
+checkSurroundingPiecesMid(1, 3, 2, 3, 2) :- write('That coordinate is surrounded by white pieces!'), nl, !, fail.
+checkSurroundingPiecesMid(1, 3, 2, 2, 3) :- write('That coordinate is surrounded by white pieces!'), nl, !, fail.
+checkSurroundingPiecesMid(1, 3, 3, 3, 2) :- write('That coordinate is surrounded by white pieces!'), nl, !, fail.
+checkSurroundingPiecesMid(1, 3, 3, 2, 3) :- write('That coordinate is surrounded by white pieces!'), nl, !, fail.
+checkSurroundingPiecesMid(1, 3, 3, 3, 3) :- write('That coordinate is surrounded by henge pieces!'), nl, !, fail.
+checkSurroundingPiecesMid(1, _, _, _, _) :- write('Successful black play!'), nl.
+checkSurroundingPiecesMid(2, 1, 1, 1, 1) :- write('That coordinate is surrounded by black pieces!'), nl, !, fail.
+checkSurroundingPiecesMid(2, 3, 1, 1, 1) :- write('That coordinate is surrounded by black pieces!'), nl, !, fail.
+checkSurroundingPiecesMid(2, 1, 3, 1, 1) :- write('That coordinate is surrounded by black pieces!'), nl, !, fail.
+checkSurroundingPiecesMid(2, 1, 1, 3, 1) :- write('That coordinate is surrounded by black pieces!'), nl, !, fail.
+checkSurroundingPiecesMid(2, 1, 1, 1, 3) :- write('That coordinate is surrounded by black pieces!'), nl, !, fail.
+checkSurroundingPiecesMid(2, 3, 3, 1, 1) :- write('That coordinate is surrounded by black pieces!'), nl, !, fail.
+checkSurroundingPiecesMid(2, 3, 1, 3, 1) :- write('That coordinate is surrounded by black pieces!'), nl, !, fail.
+checkSurroundingPiecesMid(2, 3, 1, 1, 3) :- write('That coordinate is surrounded by black pieces!'), nl, !, fail.
+checkSurroundingPiecesMid(2, 3, 3, 3, 1) :- write('That coordinate is surrounded by black pieces!'), nl, !, fail.
+checkSurroundingPiecesMid(2, 3, 3, 1, 3) :- write('That coordinate is surrounded by black pieces!'), nl, !, fail.
+checkSurroundingPiecesMid(2, 3, 3, 3, 3) :- write('That coordinate is surrounded by henge pieces!'), nl, !, fail.
+checkSurroundingPiecesMid(2, _, _, _, _) :- write('Successful white play!'), nl.
+checkSurroundingPiecesMid(3, _, _, _, _) :- write('Successfully placed henge piece!'), nl.
+
+checkSurroundingPiecesSides(1, 2, 2, 2) :- write('That coordinate is surrounded by white pieces!'), nl, !, fail.
+checkSurroundingPiecesSides(1, 3, 2, 2) :- write('That coordinate is surrounded by white pieces!'), nl, !, fail.
+checkSurroundingPiecesSides(1, 2, 3, 2) :- write('That coordinate is surrounded by white pieces!'), nl, !, fail.
+checkSurroundingPiecesSides(1, 2, 2, 3) :- write('That coordinate is surrounded by white pieces!'), nl, !, fail.
+checkSurroundingPiecesSides(1, 3, 3, 2) :- write('That coordinate is surrounded by white pieces!'), nl, !, fail.
+checkSurroundingPiecesSides(1, 3, 2, 3) :- write('That coordinate is surrounded by white pieces!'), nl, !, fail.
+checkSurroundingPiecesSides(1, 3, 3, 3) :- write('That coordinate is surrounded by white pieces!'), nl, !, fail.
+checkSurroundingPiecesSides(1, _, _, _) :- write('Successful black play!'), nl.
+checkSurroundingPiecesSides(2, 1, 1, 1) :- write('That coordinate is surrounded by black pieces!'), nl, !, fail.
+checkSurroundingPiecesSides(2, 3, 1, 1) :- write('That coordinate is surrounded by black pieces!'), nl, !, fail.
+checkSurroundingPiecesSides(2, 1, 3, 1) :- write('That coordinate is surrounded by black pieces!'), nl, !, fail.
+checkSurroundingPiecesSides(2, 1, 1, 3) :- write('That coordinate is surrounded by black pieces!'), nl, !, fail.
+checkSurroundingPiecesSides(2, 3, 3, 1) :- write('That coordinate is surrounded by black pieces!'), nl, !, fail.
+checkSurroundingPiecesSides(2, 3, 1, 3) :- write('That coordinate is surrounded by black pieces!'), nl, !, fail.
+checkSurroundingPiecesSides(2, 3, 3, 3) :- write('That coordinate is surrounded by black pieces!'), nl, !, fail.
+checkSurroundingPiecesSides(2, _, _, _) :- write('Successful white play!'), nl.
+checkSurroundingPiecesSides(3, _, _, _) :- write('Successfully placed henge piece!'), nl.
+
+checkSurroundingPiecesCorner(1, 2, 2) :- write('That coordinate is surrounded by white pieces!'), nl, !, fail.
+checkSurroundingPiecesCorner(1, 3, 2) :- write('That coordinate is surrounded by white pieces!'), nl, !, fail.
+checkSurroundingPiecesCorner(1, 2, 3) :- write('That coordinate is surrounded by white pieces!'), nl, !, fail.
+checkSurroundingPiecesCorner(1, 3, 3) :- write('That coordinate is surrounded by white pieces!'), nl, !, fail.
+checkSurroundingPiecesCorner(1, _, _) :- write('Successful black play!'), nl.
+checkSurroundingPiecesCorner(2, 1, 1) :- write('That coordinate is surrounded by black pieces!'), nl, !, fail.
+checkSurroundingPiecesCorner(2, 3, 1) :- write('That coordinate is surrounded by black pieces!'), nl, !, fail.
+checkSurroundingPiecesCorner(2, 1, 3) :- write('That coordinate is surrounded by black pieces!'), nl, !, fail.
+checkSurroundingPiecesCorner(2, 3, 3) :- write('That coordinate is surrounded by black pieces!'), nl, !, fail.
+checkSurroundingPiecesCorner(2, _, _) :- write('Successful white play!'), nl.
+checkSurroundingPiecesCorner(3, _, _) :- write('Successfully placed henge piece!'), nl.
+	
+getOpponentName('white', 'black').
+getOpponentName('black', 'white').	
 	
 %selects which piece to play
 selectPiece('white', 1, 2).
@@ -140,6 +321,7 @@ checkBoardBounds(Row, Col) :-
 
 %checks if a number is between 1 and 5
 checkNumberBounds(Number) :- Number > 0, Number =< 5.
+checkNumberBounds(_) :- write('That coordinate is out of bounds, try again!'), nl, !, fail.
 
 %gets a piece from the board, given coordinates	
 getPiece(Board, Row, Col, Val) :-  
@@ -147,13 +329,11 @@ getPiece(Board, Row, Col, Val) :-
 	nth1(Col, ARow, Val).
 
 %prints the info about which piece was asked for	
-printPieceInfo(Val) :-
-	(
-		Val =:= 0 -> write('That tile is empty.');
-		Val =:= 1 -> write('That tile is occupied by a Black piece.');
-		Val =:= 2 -> write('That tile is occupied by a White piece.');
-		Val =:= 3 -> write('That tile is occupied by a Henge piece.')
-	).
+printPieceInfo(0) :- write('That tile is empty.').
+printPieceInfo(1) :- write('That tile is occupied by a Black piece.').
+printPieceInfo(2) :- write('That tile is occupied by a White piece.').
+printPieceInfo(3) :- write('That tile is occupied by a Henge piece.').
+printPieceInfo(_) :- write('Error'), nl, !, fail.
 
 %setPiece
 setPiece([L|Ls], 1, Y, Value, [R|Ls]) :- setPieceAux(L, Y, Value, R).
@@ -174,11 +354,6 @@ setPieceAux([C|Cs], Y, Value, [C|Rs]) :-
 teste :-
 	freshBoard(Board),
 	printBoard(Board),
-	write('Select Row: '),
-	read(Row),
-	get_code(_),
-	write('Select Column: '),
-	read(Col),
-	get_code(_),
-	setPiece(Board, Row, Col, 1, NewBoard),
-	printBoard(NewBoard).
+	createPlayer(white, 10, 2, Player1, human),
+	createPlayer(black, 10, 2, Player2, human),
+	checkBoardTopLeft(Board, 1, 1, Player1).
