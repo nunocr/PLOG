@@ -117,6 +117,7 @@ checkBoardSurroundings(Board, 5, 1, CurrPlayer) :- checkBoardBotLeft(Board, 5, 1
 checkBoardSurroundings(Board, 1, 5, CurrPlayer) :- checkBoardTopRight(Board, 1, 5, CurrPlayer).
 checkBoardSurroundings(Board, 5, 5, CurrPlayer) :- checkBoardBotRight(Board, 5, 5, CurrPlayer).
 checkBoardSurroundings(Board, 1, Col, CurrPlayer) :- checkBoardTop(Board, 1, Col, CurrPlayer).
+checkBoardSurroundings(Board, 5, Col, CurrPlayer) :- checkBoardBot(Board, 5, Col, CurrPlayer).
 checkBoardSurroundings(Board, Row, 5, CurrPlayer) :- checkBoardRight(Board, Row, 5, CurrPlayer).
 checkBoardSurroundings(Board, Row, 1, CurrPlayer) :- checkBoardLeft(Board, Row, 1, CurrPlayer).
 checkBoardSurroundings(Board, Row, Col, CurrPlayer) :- checkBoardMiddle(Board, Row, Col, CurrPlayer).
@@ -175,6 +176,18 @@ checkBoardTop(Board, 1, Col, CurrPlayer) :-
 	getPiece(Board, 1, ColRight, RightPiece),
 	getPiece(Board, 2, Col, BottomPiece),
 	checkSurroundingPiecesSides(CurrPlayerPiece, LeftPiece, RightPiece, BottomPiece).
+	
+checkBoardBot(Board, 5, Col, CurrPlayer) :-
+	nth1(1, CurrPlayer, PlayerName),
+	selectPiece(PlayerName, 1, CurrPlayerPiece),
+	
+	ColLeft is Col - 1,
+	ColRight is Col + 1,
+	
+	getPiece(Board, 1, ColLeft, LeftPiece),
+	getPiece(Board, 1, ColRight, RightPiece),
+	getPiece(Board, 4, Col, TopPiece),
+	checkSurroundingPiecesSides(CurrPlayerPiece, LeftPiece, RightPiece, TopPiece).
 	
 checkBoardTopLeft(Board, 1, 1, CurrPlayer) :-
 	nth1(1, CurrPlayer, PlayerName),
@@ -355,5 +368,5 @@ teste :-
 	freshBoard(Board),
 	printBoard(Board),
 	createPlayer(white, 10, 2, Player1, human),
-	createPlayer(black, 10, 2, Player2, human),
+	%createPlayer(black, 10, 2, Player2, human),
 	checkBoardTopLeft(Board, 1, 1, Player1).
