@@ -1,4 +1,5 @@
 :- ['interface.pl',
 	'board.pl',
-	'logic.pl'
+	'logic.pl',
+	'boardCases.pl'
 	].
