@@ -1,3 +1,5 @@
+%%%%%%%%%%%%%%% CHECKING PLAYS FOR ERROR MESSAGES %%%%%%%%%%%%%%%%%%
+
 checkSurroundingPiecesMid(1, 2, 2, 2, 2, Return) :- Return is 0, write('That coordinate is surrounded by white pieces!'), nl, !, fail.
 checkSurroundingPiecesMid(1, 3, 2, 2, 2, Return) :- Return is 0, write('That coordinate is surrounded by white pieces!'), nl, !, fail.
 checkSurroundingPiecesMid(1, 2, 3, 2, 2, Return) :- Return is 0, write('That coordinate is surrounded by white pieces!'), nl, !, fail.
@@ -34,7 +36,6 @@ checkSurroundingPiecesMid(2, 3, 3, 3, 3, Return) :- Return is 0, write('That coo
 checkSurroundingPiecesMid(2, _, _, _, _, Return) :- Return is 1, write('Successful white play!'), nl.
 checkSurroundingPiecesMid(3, _, _, _, _, Return) :- Return is 1, write('Successfully placed henge piece!'), nl.
 
-
 checkSurroundingPiecesSides(1, 2, 2, 2, Return) :- Return is 0, write('That coordinate is surrounded by white pieces!'), nl, !, fail.
 checkSurroundingPiecesSides(1, 3, 2, 2, Return) :- Return is 0, write('That coordinate is surrounded by white pieces!'), nl, !, fail.
 checkSurroundingPiecesSides(1, 2, 3, 2, Return) :- Return is 0, write('That coordinate is surrounded by white pieces!'), nl, !, fail.
@@ -67,3 +68,69 @@ checkSurroundingPiecesCorner(2, 1, 3, Return) :- Return is 0, write('That coordi
 checkSurroundingPiecesCorner(2, 3, 3, Return) :- Return is 0, write('That coordinate is surrounded by black pieces!'), nl, !, fail.
 checkSurroundingPiecesCorner(2, _, _, Return) :- Return is 1, write('Successful white play!'), nl.
 checkSurroundingPiecesCorner(3, _, _, Return) :- Return is 1, write('Successfully placed henge piece!'), nl.
+
+%%%%%%%%%%%%%%% CHECKING EATING PIECES %%%%%%%%%%%%%%%%%%
+checkEatingPiecesMiddle(Board, Row, Col, 1, 2, 2, 2, 2, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 1, 3, 2, 2, 2, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 1, 2, 3, 2, 2, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 1, 2, 2, 3, 2, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 1, 2, 2, 2, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 1, 3, 3, 2, 2, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 1, 3, 2, 3, 2, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 1, 3, 2, 2, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 1, 2, 3, 2, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 1, 2, 2, 3, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 1, 2, 3, 3, 2, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 1, 3, 3, 3, 2, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 1, 3, 3, 2, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 1, 3, 2, 3, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 1, 2, 3, 3, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 1, 3, 3, 3, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 2, 1, 1, 1, 1, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 2, 3, 1, 1, 1, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 2, 1, 3, 1, 1, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 2, 1, 1, 3, 1, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 2, 1, 1, 1, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 2, 3, 3, 1, 1, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 2, 3, 1, 3, 1, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 2, 3, 1, 1, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 2, 1, 3, 1, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 2, 1, 1, 3, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 2, 1, 3, 3, 1, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 2, 3, 3, 3, 1, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 2, 3, 3, 1, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 2, 3, 1, 3, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 2, 1, 3, 3, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, Row, Col, 2, 3, 3, 3, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesMiddle(Board, _, _, 1, _, _, _, _, BoardOut) :- BoardOut = Board, write('Piece not eaten.'), nl, !.
+checkEatingPiecesMiddle(Board, _, _, 2, _, _, _, _, BoardOut) :- BoardOut = Board, write('Piece not eaten.'), nl, !.
+
+checkEatingPiecesSides(Board, Row, Col, 1, 2, 2, 2, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesSides(Board, Row, Col, 1, 3, 2, 2, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesSides(Board, Row, Col, 1, 2, 3, 2, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesSides(Board, Row, Col, 1, 2, 2, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesSides(Board, Row, Col, 1, 3, 3, 2, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesSides(Board, Row, Col, 1, 3, 2, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesSides(Board, Row, Col, 1, 2, 3, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesSides(Board, Row, Col, 1, 3, 3, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesSides(Board, Row, Col, 2, 1, 1, 1, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesSides(Board, Row, Col, 2, 3, 1, 1, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesSides(Board, Row, Col, 2, 1, 3, 1, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesSides(Board, Row, Col, 2, 1, 1, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesSides(Board, Row, Col, 2, 3, 3, 1, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesSides(Board, Row, Col, 2, 3, 1, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesSides(Board, Row, Col, 2, 1, 3, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesSides(Board, Row, Col, 2, 3, 3, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesSides(Board, _, _, 1, _, _, _, BoardOut) :- BoardOut = Board, write('Piece not eaten.'), nl, !.
+checkEatingPiecesSides(Board, _, _, 2, _, _, _, BoardOut) :- BoardOut = Board, write('Piece not eaten.'), nl, !.
+
+checkEatingPiecesCorner(Board, Row, Col, 1, 2, 2, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesCorner(Board, Row, Col, 1, 3, 2, BoardOut) :- write('Piece is getting eaten.'), nl, write(Board), nl, removePieceFromBoard(Board, Row, Col, BoardOut), write(BoardOut), nl, !.
+checkEatingPiecesCorner(Board, Row, Col, 1, 2, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesCorner(Board, Row, Col, 1, 3, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesCorner(Board, Row, Col, 2, 1, 1, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesCorner(Board, Row, Col, 2, 3, 1, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesCorner(Board, Row, Col, 2, 1, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesCorner(Board, Row, Col, 2, 3, 3, BoardOut) :- write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
+checkEatingPiecesCorner(Board, _, _, 1, _, _, BoardOut) :- BoardOut = Board, write('Piece not eaten.'), nl, !.
+checkEatingPiecesCorner(Board, _, _, 2, _, _, BoardOut) :- BoardOut = Board, write('Piece not eaten.'), nl, !.
