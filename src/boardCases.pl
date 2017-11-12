@@ -131,3 +131,89 @@ checkEatingPiecesCorner(Board, Row, Col, 2, 3, 1, BoardOut, PiecesEaten) :- Piec
 checkEatingPiecesCorner(Board, Row, Col, 2, 1, 3, BoardOut, PiecesEaten) :- PiecesEaten is 1, write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
 checkEatingPiecesCorner(Board, Row, Col, 2, 3, 3, BoardOut, PiecesEaten) :- PiecesEaten is 1, write('Piece is getting eaten.'), nl, removePieceFromBoard(Board, Row, Col, BoardOut), !.
 checkEatingPiecesCorner(Board, _, _, _, _, _, BoardOut, PiecesEaten) :- PiecesEaten is 0, BoardOut = Board, write('Piece not eaten.'), nl, !.
+
+%%%%%%%%%%%%%%% CHECKING PLAYS %%%%%%%%%%%%%%%%%%
+
+checkPlaysSurroundingPiecesMid(1, 2, 2, 2, 2, 0).
+checkPlaysSurroundingPiecesMid(1, 3, 2, 2, 2, 0).
+checkPlaysSurroundingPiecesMid(1, 2, 3, 2, 2, 0).
+checkPlaysSurroundingPiecesMid(1, 2, 2, 3, 2, 0).
+checkPlaysSurroundingPiecesMid(1, 2, 2, 2, 3, 0).
+checkPlaysSurroundingPiecesMid(1, 3, 3, 2, 2, 0).
+checkPlaysSurroundingPiecesMid(1, 3, 2, 3, 2, 0).
+checkPlaysSurroundingPiecesMid(1, 3, 2, 2, 3, 0).
+checkPlaysSurroundingPiecesMid(1, 2, 3, 2, 3, 0).
+checkPlaysSurroundingPiecesMid(1, 2, 2, 3, 3, 0).
+checkPlaysSurroundingPiecesMid(1, 2, 3, 3, 2, 0).
+checkPlaysSurroundingPiecesMid(1, 3, 3, 3, 2, 0).
+checkPlaysSurroundingPiecesMid(1, 3, 3, 2, 3, 0).
+checkPlaysSurroundingPiecesMid(1, 3, 2, 3, 3, 0).
+checkPlaysSurroundingPiecesMid(1, 2, 3, 3, 3, 0).
+checkPlaysSurroundingPiecesMid(1, 3, 3, 3, 3, 0).
+checkPlaysSurroundingPiecesMid(1, _, _, _, _, 1).
+checkPlaysSurroundingPiecesMid(2, 1, 1, 1, 1, 0).
+checkPlaysSurroundingPiecesMid(2, 3, 1, 1, 1, 0).
+checkPlaysSurroundingPiecesMid(2, 1, 3, 1, 1, 0).
+checkPlaysSurroundingPiecesMid(2, 1, 1, 3, 1, 0).
+checkPlaysSurroundingPiecesMid(2, 1, 1, 1, 3, 0).
+checkPlaysSurroundingPiecesMid(2, 3, 3, 1, 1, 0).
+checkPlaysSurroundingPiecesMid(2, 3, 1, 3, 1, 0).
+checkPlaysSurroundingPiecesMid(2, 3, 1, 1, 3, 0).
+checkPlaysSurroundingPiecesMid(2, 1, 3, 1, 3, 0).
+checkPlaysSurroundingPiecesMid(2, 1, 1, 3, 3, 0).
+checkPlaysSurroundingPiecesMid(2, 1, 3, 3, 1, 0).
+checkPlaysSurroundingPiecesMid(2, 3, 3, 3, 1, 0).
+checkPlaysSurroundingPiecesMid(2, 3, 3, 1, 3, 0).
+checkPlaysSurroundingPiecesMid(2, 1, 3, 3, 3, 0).
+checkPlaysSurroundingPiecesMid(2, 3, 1, 3, 3, 0).
+checkPlaysSurroundingPiecesMid(2, 3, 3, 3, 3, 0).
+checkPlaysSurroundingPiecesMid(2, _, _, _, _, 1).
+checkPlaysSurroundingPiecesMid(3, _, _, _, _, 1).
+
+checkPlaysSurroundingPiecesSides(1, 2, 2, 2, 0).
+checkPlaysSurroundingPiecesSides(1, 3, 2, 2, 0).
+checkPlaysSurroundingPiecesSides(1, 2, 3, 2, 0).
+checkPlaysSurroundingPiecesSides(1, 2, 2, 3, 0).
+checkPlaysSurroundingPiecesSides(1, 3, 3, 2, 0).
+checkPlaysSurroundingPiecesSides(1, 3, 2, 3, 0).
+checkPlaysSurroundingPiecesSides(1, 2, 3, 3, 0).
+checkPlaysSurroundingPiecesSides(1, 3, 3, 3, 0).
+checkPlaysSurroundingPiecesSides(1, _, _, _, 1).
+checkPlaysSurroundingPiecesSides(2, 1, 1, 1, 0).
+checkPlaysSurroundingPiecesSides(2, 3, 1, 1, 0).
+checkPlaysSurroundingPiecesSides(2, 1, 3, 1, 0).
+checkPlaysSurroundingPiecesSides(2, 1, 1, 3, 0).
+checkPlaysSurroundingPiecesSides(2, 3, 3, 1, 0).
+checkPlaysSurroundingPiecesSides(2, 3, 1, 3, 0).
+checkPlaysSurroundingPiecesSides(2, 1, 3, 3, 0).
+checkPlaysSurroundingPiecesSides(2, 3, 3, 3, 0).
+checkPlaysSurroundingPiecesSides(2, _, _, _, 1).
+checkPlaysSurroundingPiecesSides(3, _, _, _, 1).
+
+%%%%%%%%%%%%%% CHECKPLAYS CORNERS (HARDCODED DUE TO SOME BUG) %%%%%%%%%%%%%%%%%%%
+
+checkPlaysSurroundingPiecesCorner(1, 2, 2, 0).
+checkPlaysSurroundingPiecesCorner(1, 3, 2, 0).
+checkPlaysSurroundingPiecesCorner(1, 2, 3, 0).
+checkPlaysSurroundingPiecesCorner(1, 3, 3, 0).
+checkPlaysSurroundingPiecesCorner(1, 0, 0, 1).
+checkPlaysSurroundingPiecesCorner(1, 1, 0, 1).
+checkPlaysSurroundingPiecesCorner(1, 0, 1, 1).
+checkPlaysSurroundingPiecesCorner(1, 1, 1, 1).
+checkPlaysSurroundingPiecesCorner(1, 3, 0, 1).
+checkPlaysSurroundingPiecesCorner(1, 0, 3, 1).
+checkPlaysSurroundingPiecesCorner(1, 1, 3, 1).
+checkPlaysSurroundingPiecesCorner(1, 3, 1, 1).
+
+checkPlaysSurroundingPiecesCorner(2, 1, 1, 0).
+checkPlaysSurroundingPiecesCorner(2, 3, 1, 0).
+checkPlaysSurroundingPiecesCorner(2, 1, 3, 0).
+checkPlaysSurroundingPiecesCorner(2, 3, 3, 0).
+checkPlaysSurroundingPiecesCorner(2, 0, 0, 1).
+checkPlaysSurroundingPiecesCorner(2, 2, 0, 1).
+checkPlaysSurroundingPiecesCorner(2, 0, 2, 1).
+checkPlaysSurroundingPiecesCorner(2, 2, 2, 1).
+checkPlaysSurroundingPiecesCorner(2, 3, 0, 1).
+checkPlaysSurroundingPiecesCorner(2, 0, 3, 1).
+checkPlaysSurroundingPiecesCorner(2, 2, 3, 1).
+checkPlaysSurroundingPiecesCorner(2, 3, 2, 1).

@@ -53,7 +53,7 @@ clearScreen,
 playMenuScreen,
 read(Option),
 (
-	Option =:= 1 -> startGame; %mudar para startGame
+	Option =:= 1 -> startGamePvP;
 	Option =:= 2 -> botDifficultyMenu;
 	Option =:= 3 -> botDifficultyMenu;
 	Option =:= 4 -> mainMenu;
@@ -82,12 +82,39 @@ clearScreen,
 botDifficultyScreen,
 read(Option),
 (
-	Option =:= 1 -> clearScreen, write('EZ PZ'), nl;
-	Option =:= 2 -> clearScreen, write('DONEZO'), nl;
+	Option =:= 1 -> selectPlayerMenu;
+	Option =:= 2 -> selectPlayerMenu;
 	Option =:= 3 -> difficultyMenu;
 	Option =:= 4 -> playMenu;
 	
 	botDifficultyMenu
+).
+
+selectPlayerScreen :-
+clearScreen,
+write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl,
+write('||                          Go-Ro-Go                            ||'), nl,
+write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl,
+write('||                                                              ||'), nl,
+write('||                    Select Your Piece Color                   ||'), nl,
+write('||                                                              ||'), nl,
+write('||                    1. Black                                  ||'), nl,
+write('||                    2. White                                  ||'), nl,
+write('||                    3. Back to Play Menu                      ||'), nl,
+write('||                                                              ||'), nl,
+write('||                                                              ||'), nl,
+write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl.
+
+selectPlayerMenu :-
+clearScreen,
+selectPlayerScreen,
+read(Option),
+(
+	Option =:= 1 -> startGamePvE(black);
+	Option =:= 2 -> startGamePvE(white);
+	Option =:= 3 -> playMenu;
+	
+	selectPlayerMenu
 ).
 
 difficultyScreen :-
