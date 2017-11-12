@@ -1,10 +1,14 @@
 %finish condition
 gameLoop(_, 26, _, _) :- mainMenu, !.
 
+gameLoop(_, _, [_, 0, _, _], [_, _, _, _]) :- gameOverMenu('Black', 'Out of normal pieces.').
+
+gameLoop(_, _, [_, _, _, _], [_, 0, _, _]) :- gameOverMenu('White', 'Out of normal pieces.').
+
 %first round henge placing
 gameLoop(Board, -1, Player1, Player2) :-
 
-	%clearScreen,
+	clearScreen,
 	printBoard(Board),
 	write('White player has to place the last henge piece available'), nl,
 	
@@ -25,7 +29,7 @@ gameLoop(Board, -1, Player1, Player2) :-
 %gameloop predicate
 gameLoop(Board, Counter, Player1, Player2) :-
 
-	%clearScreen,
+	clearScreen,
 	printBoard(Board),
 	
 	write('Press ENTER to continue.'), nl,
@@ -36,7 +40,10 @@ gameLoop(Board, Counter, Player1, Player2) :-
 	write(Counter1), nl,
 	checkTurn(Counter1, Player1, Player2, CurrPlayer),
 	printPlayer(CurrPlayer),
+	
+	repeat,
 	askPlay(Board, CurrPlayer, BoardOut, CurrPlayerOut),
+	!,
 	
 	updateBoard(BoardOut, CurrPlayer, BoardOut2),
 	
@@ -348,7 +355,7 @@ updateRow(BoardIn, CurrPlayer, BoardOut, Row) :-
 	checkForEating(BoardOut4, OppPiece, Row, 5, BoardOut).
 
 %removes a piece from player, base case
-removePieceFromPlayer([_, 0, _, _, _], _, _) :- write('you lose.').
+%removePieceFromPlayer([_, 0, _, _, _], _, _) :- mainMenu.
 
 %removes normal piece from player
 removePieceFromPlayer(Player, 1, PlayerOut) :- removeNormalPieceFromPlayer(Player, PlayerOut).
@@ -360,6 +367,8 @@ removeNormalPieceFromPlayer(Player, PlayerOut) :-
 	nth1(2, Player, NormalAmount),
 	NewNormalAmount is NormalAmount - 1,
 	updatePlayer(Player, 2, NewNormalAmount, PlayerOut).
+	
+removeHengePieceFromPlayer([_, _, 0, _], _) :- write('No henge pieces available!'), nl, !, fail.
 	
 removeHengePieceFromPlayer(Player, PlayerOut) :-
 	nth1(3, Player, HengeAmount),

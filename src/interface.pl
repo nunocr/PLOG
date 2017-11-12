@@ -177,3 +177,31 @@ read(Option),
 	
 	aboutMenu
 ).
+
+gameOverScreen(Winner, Reason) :-
+clearScreen,
+write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl,
+write('||                          Go-Ro-Go                              ||'), nl,
+write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl,
+write('||                                                                ||'), nl,
+write('||                       End of the game!                         ||'), nl,
+write('||                                                                ||'), nl,
+write('||                                                                ||'), nl,
+write('||                        Winner: '), write(Winner), write('!                          ||'), nl,
+write('||                 Reason: '), write(Reason), write('                  ||'), nl,
+write('||                                                                ||'), nl,
+write('||                                                                ||'), nl,
+write('||                     1. Back to Main Menu                       ||'), nl,
+write('||                                                                ||'), nl,
+write('||                                                                ||'), nl,
+write('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||'), nl.
+
+gameOverMenu(Winner, Reason) :-
+clearScreen,
+gameOverScreen(Winner, Reason),
+read(Option),
+(
+	Option =:= 1 -> mainMenu;
+	
+	gameOverMenu
+).
