@@ -1,9 +1,9 @@
 %finish condition
 gameLoop(_, 26, _, _) :- mainMenu, !.
 
-gameLoop(_, _, [_, 0, _, _], [_, _, _, _]) :- gameOverMenu('Black', 'Out of normal pieces.').
+gameLoop(_, _, [_, 0, _, _, _], [_, _, _, _, _]) :- gameOverMenu('Black', 'Out of normal pieces.').
 
-gameLoop(_, _, [_, _, _, _], [_, 0, _, _]) :- gameOverMenu('White', 'Out of normal pieces.').
+gameLoop(_, _, [_, _, _, _, _], [_, 0, _, _, _]) :- gameOverMenu('White', 'Out of normal pieces.').
 
 %first round henge placing
 gameLoop(Board, -1, Player1, Player2) :-
@@ -45,10 +45,10 @@ gameLoop(Board, Counter, Player1, Player2) :-
 	askPlay(Board, CurrPlayer, BoardOut, CurrPlayerOut),
 	!,
 	
-	updateBoard(BoardOut, CurrPlayer, BoardOut2),
+	updateBoard(BoardOut, CurrPlayerOut, BoardOut2, CurrPlayerOut2),
 	
-	nth1(1, CurrPlayer, CurrPlayerName),
-	gameLoopDecider(CurrPlayerName, BoardOut2, Counter1, CurrPlayerOut, Player1, Player2).
+	nth1(1, CurrPlayerOut2, CurrPlayerName),
+	gameLoopDecider(CurrPlayerName, BoardOut2, Counter1, CurrPlayerOut2, Player1, Player2).
 
 %game loop auxiliary
 gameLoopDecider('white', BoardOut, Counter1, CurrPlayerOut, _, Player2) :- gameLoop(BoardOut, Counter1, CurrPlayerOut, Player2).
@@ -57,13 +57,13 @@ gameLoopDecider('black', BoardOut, Counter1, CurrPlayerOut, Player1, _) :- gameL
 %fresh game start
 startGame :-
 	freshBoard(X),
-	createPlayer(white, 10, 2, Player1, human),
-	createPlayer(black, 10, 2, Player2, human),
+	createPlayer(white, 10, 2, Player1, human, 0),
+	createPlayer(black, 10, 2, Player2, human, 0),
 	gameLoop(X, -1, Player1, Player2).
 	
 %creates a player
-createPlayer(Name, Pieces, HengePieces, PlayerInfo, PlayerType) :- 
-	PlayerInfo = [Name, Pieces, HengePieces, PlayerType].
+createPlayer(Name, Pieces, HengePieces, PlayerInfo, PlayerType, Score) :- 
+	PlayerInfo = [Name, Pieces, HengePieces, PlayerType, Score].
 	
 %prints player info
 printPlayer(Player) :-
@@ -71,10 +71,12 @@ printPlayer(Player) :-
 	printPlayerAux(PlayerName),
 	nth1(2, Player, PlayerPieces),
 	nth1(3, Player, PlayerHengePieces),
+	nth1(5, Player, PlayerScore),
 	write(PlayerPieces),
 	write(' normal pieces, '),
 	write(PlayerHengePieces),
-	write(' henge pieces.'), nl.
+	write(' henge pieces.'),
+	write(' Score: '), write(PlayerScore), nl.
 
 %player print auxiliary
 printPlayerAux('white') :- write('White player info: ').
@@ -114,23 +116,24 @@ readPieceType(_) :- write('Wrong piece type, please try again!'), nl, !, fail.
 	
 %checks board
 checkBoard(Board, Row, Col, CurrPlayer, Return) :-
-	checkBoardBounds(Row, Col), !,
-	checkBoardSpot(Board, Row, Col), !,
+	checkBoardBounds(Row, Col, Return), !,
+	checkBoardSpot(Board, Row, Col, Return), !,
 	checkBoardSurroundings(Board, Row, Col, CurrPlayer, Return).
 	
-checkBoardSpot(Board, Row, Col) :-
+checkBoardSpot(Board, Row, Col, Return) :-
+	Return is 1,
 	getPiece(Board, Row, Col, 0).
 
-checkBoardSpot(_, _, _)	:- write('That coordinate is already occupied by a piece, try again!'), nl, !, fail.
+checkBoardSpot(_, _, _, Return)	:- Return is 0, write('That coordinate is already occupied by a piece, try again!'), nl, !, fail.
 	
-checkBoardSurroundings(Board, 1, 1, CurrPlayer, Return) :- checkBoardTopLeft(Board, 1, 1, CurrPlayer, Return).
-checkBoardSurroundings(Board, 5, 1, CurrPlayer, Return) :- checkBoardBotLeft(Board, 5, 1, CurrPlayer, Return).
-checkBoardSurroundings(Board, 1, 5, CurrPlayer, Return) :- checkBoardTopRight(Board, 1, 5, CurrPlayer, Return).
-checkBoardSurroundings(Board, 5, 5, CurrPlayer, Return) :- checkBoardBotRight(Board, 5, 5, CurrPlayer, Return).
-checkBoardSurroundings(Board, 1, Col, CurrPlayer, Return) :- checkBoardTop(Board, 1, Col, CurrPlayer, Return).
-checkBoardSurroundings(Board, 5, Col, CurrPlayer, Return) :- checkBoardBot(Board, 5, Col, CurrPlayer, Return).
-checkBoardSurroundings(Board, Row, 5, CurrPlayer, Return) :- checkBoardRight(Board, Row, 5, CurrPlayer, Return).
-checkBoardSurroundings(Board, Row, 1, CurrPlayer, Return) :- checkBoardLeft(Board, Row, 1, CurrPlayer, Return).
+checkBoardSurroundings(Board, Row, Col, CurrPlayer, Return) :- Row =:= 1, Col =:= 1, checkBoardTopLeft(Board, Row, Col, CurrPlayer, Return).
+checkBoardSurroundings(Board, Row, Col, CurrPlayer, Return) :- Row =:= 5, Col =:= 1, checkBoardBotLeft(Board, Row, Col, CurrPlayer, Return).
+checkBoardSurroundings(Board, Row, Col, CurrPlayer, Return) :- Row =:= 1, Col =:= 5, checkBoardTopRight(Board, Row, Col, CurrPlayer, Return).
+checkBoardSurroundings(Board, Row, Col, CurrPlayer, Return) :- Row =:= 5, Col =:= 5, checkBoardBotRight(Board, Row, Col, CurrPlayer, Return).
+checkBoardSurroundings(Board, Row, Col, CurrPlayer, Return) :- Row =:= 1, checkBoardTop(Board, Row, Col, CurrPlayer, Return).
+checkBoardSurroundings(Board, Row, Col, CurrPlayer, Return) :- Row =:= 5, checkBoardBot(Board, Row, Col, CurrPlayer, Return).
+checkBoardSurroundings(Board, Row, Col, CurrPlayer, Return) :- Col =:= 5, checkBoardRight(Board, Row, Col, CurrPlayer, Return).
+checkBoardSurroundings(Board, Row, Col, CurrPlayer, Return) :- Col =:= 1, checkBoardLeft(Board, Row, Col, CurrPlayer, Return).
 checkBoardSurroundings(Board, Row, Col, CurrPlayer, Return) :- checkBoardMiddle(Board, Row, Col, CurrPlayer, Return).
 
 checkBoardMiddle(Board, Row, Col, CurrPlayer, Return) :-
@@ -241,17 +244,17 @@ selectPiece(_, 2, 3).
 selectOppNormalPiece('white', 1).
 selectOppNormalPiece('black', 2).
 
-checkForEating(Board, Piece, Row, Col, BoardOut) :- Row =:= 1, Col =:= 1, checkForEatingTopLeft(Board, Piece, Row, Col, BoardOut).
-checkForEating(Board, Piece, Row, Col, BoardOut) :- Row =:= 1, Col =:= 5, checkForEatingTopRight(Board, Piece, Row, Col, BoardOut).
-checkForEating(Board, Piece, Row, Col, BoardOut) :- Row =:= 5, Col =:= 1, checkForEatingBotLeft(Board, Piece, Row, Col, BoardOut).
-checkForEating(Board, Piece, Row, Col, BoardOut) :- Row =:= 5, Col =:= 5, checkForEatingBotRight(Board, Piece, Row, Col, BoardOut).
-checkForEating(Board, Piece, Row, Col, BoardOut) :- Row =:= 1, checkForEatingTop(Board, Piece, Row, Col, BoardOut).
-checkForEating(Board, Piece, Row, Col, BoardOut) :- Row =:= 5, checkForEatingBot(Board, Piece, Row, Col, BoardOut).
-checkForEating(Board, Piece, Row, Col, BoardOut) :- Col =:= 1, checkForEatingLeft(Board, Piece, Row, Col, BoardOut).
-checkForEating(Board, Piece, Row, Col, BoardOut) :- Col =:= 5, checkForEatingRight(Board, Piece, Row, Col, BoardOut).
-checkForEating(Board, Piece, Row, Col, BoardOut) :- checkForEatingMiddle(Board, Piece, Row, Col, BoardOut).
+checkForEating(Board, Piece, Row, Col, BoardOut, PiecesEaten) :- Row =:= 1, Col =:= 1, checkForEatingTopLeft(Board, Piece, Row, Col, BoardOut, PiecesEaten).
+checkForEating(Board, Piece, Row, Col, BoardOut, PiecesEaten) :- Row =:= 1, Col =:= 5, checkForEatingTopRight(Board, Piece, Row, Col, BoardOut, PiecesEaten).
+checkForEating(Board, Piece, Row, Col, BoardOut, PiecesEaten) :- Row =:= 5, Col =:= 1, checkForEatingBotLeft(Board, Piece, Row, Col, BoardOut, PiecesEaten).
+checkForEating(Board, Piece, Row, Col, BoardOut, PiecesEaten) :- Row =:= 5, Col =:= 5, checkForEatingBotRight(Board, Piece, Row, Col, BoardOut, PiecesEaten).
+checkForEating(Board, Piece, Row, Col, BoardOut, PiecesEaten) :- Row =:= 1, checkForEatingTop(Board, Piece, Row, Col, BoardOut, PiecesEaten).
+checkForEating(Board, Piece, Row, Col, BoardOut, PiecesEaten) :- Row =:= 5, checkForEatingBot(Board, Piece, Row, Col, BoardOut, PiecesEaten).
+checkForEating(Board, Piece, Row, Col, BoardOut, PiecesEaten) :- Col =:= 1, checkForEatingLeft(Board, Piece, Row, Col, BoardOut, PiecesEaten).
+checkForEating(Board, Piece, Row, Col, BoardOut, PiecesEaten) :- Col =:= 5, checkForEatingRight(Board, Piece, Row, Col, BoardOut, PiecesEaten).
+checkForEating(Board, Piece, Row, Col, BoardOut, PiecesEaten) :- checkForEatingMiddle(Board, Piece, Row, Col, BoardOut, PiecesEaten).
 	
-checkForEatingTop(Board, Piece, Row, Col, BoardOut) :-
+checkForEatingTop(Board, Piece, Row, Col, BoardOut, PiecesEaten) :-
 	ColLeft is Col - 1,
 	ColRight is Col + 1,
 	RowBot is Row + 1, !,
@@ -259,9 +262,9 @@ checkForEatingTop(Board, Piece, Row, Col, BoardOut) :-
 	getPiece(Board, Row, ColLeft, LeftPiece),
 	getPiece(Board, Row, ColRight, RightPiece),
 	getPiece(Board, RowBot, Col, BottomPiece),
-	checkEatingPiecesSides(Board, Row, Col, Piece, LeftPiece, RightPiece, BottomPiece, BoardOut).
+	checkEatingPiecesSides(Board, Row, Col, Piece, LeftPiece, RightPiece, BottomPiece, BoardOut, PiecesEaten).
 	
-checkForEatingBot(Board, Piece, Row, Col, BoardOut) :-
+checkForEatingBot(Board, Piece, Row, Col, BoardOut, PiecesEaten) :-
 	ColLeft is Col - 1,
 	ColRight is Col + 1,
 	RowUp is Row - 1, !,
@@ -269,9 +272,9 @@ checkForEatingBot(Board, Piece, Row, Col, BoardOut) :-
 	getPiece(Board, Row, ColLeft, LeftPiece),
 	getPiece(Board, Row, ColRight, RightPiece),
 	getPiece(Board, RowUp, Col, TopPiece),
-	checkEatingPiecesSides(Board, Row, Col, Piece, LeftPiece, RightPiece, TopPiece, BoardOut).
+	checkEatingPiecesSides(Board, Row, Col, Piece, LeftPiece, RightPiece, TopPiece, BoardOut, PiecesEaten).
 	
-checkForEatingLeft(Board, Piece, Row, Col, BoardOut) :-
+checkForEatingLeft(Board, Piece, Row, Col, BoardOut, PiecesEaten) :-
 	RowUp is Row + 1,
 	RowDown is Row - 1,
 	ColRight is Col + 1, !,
@@ -279,9 +282,9 @@ checkForEatingLeft(Board, Piece, Row, Col, BoardOut) :-
 	getPiece(Board, RowUp, Col, UpperPiece),
 	getPiece(Board, RowDown, Col, BottomPiece),
 	getPiece(Board, Row, ColRight, RightPiece),
-	checkEatingPiecesSides(Board, Row, Col, Piece, UpperPiece, BottomPiece, RightPiece, BoardOut).
+	checkEatingPiecesSides(Board, Row, Col, Piece, UpperPiece, BottomPiece, RightPiece, BoardOut, PiecesEaten).
 	
-checkForEatingRight(Board, Piece, Row, Col, BoardOut) :-
+checkForEatingRight(Board, Piece, Row, Col, BoardOut, PiecesEaten) :-
 	RowUp is Row + 1,
 	RowDown is Row - 1,
 	ColLeft is Col - 1, !,
@@ -289,41 +292,41 @@ checkForEatingRight(Board, Piece, Row, Col, BoardOut) :-
 	getPiece(Board, RowUp, Col, UpperPiece),
 	getPiece(Board, RowDown, Col, BottomPiece),
 	getPiece(Board, Row, ColLeft, LeftPiece),
-	checkEatingPiecesSides(Board, Row, Col, Piece, UpperPiece, BottomPiece, LeftPiece, BoardOut).
+	checkEatingPiecesSides(Board, Row, Col, Piece, UpperPiece, BottomPiece, LeftPiece, BoardOut, PiecesEaten).
 
-checkForEatingTopLeft(Board, Piece, Row, Col, BoardOut) :-
+checkForEatingTopLeft(Board, Piece, Row, Col, BoardOut, PiecesEaten) :-
 	ColRight is Col + 1,
 	RowBot is Row + 1, !,
 
 	getPiece(Board, Row, ColRight, RightPiece),
 	getPiece(Board, RowBot, Col, BottomPiece),
-	checkEatingPiecesCorner(Board, Row, Col, Piece, RightPiece, BottomPiece, BoardOut).
+	checkEatingPiecesCorner(Board, Row, Col, Piece, RightPiece, BottomPiece, BoardOut, PiecesEaten).
 	
-checkForEatingTopRight(Board, Piece, Row, Col, BoardOut) :-
+checkForEatingTopRight(Board, Piece, Row, Col, BoardOut, PiecesEaten) :-
 	ColLeft is Col - 1,
 	RowBot is Row + 1, !,
 
 	getPiece(Board, Row, ColLeft, LeftPiece),
 	getPiece(Board, RowBot, Col, BottomPiece),
-	checkEatingPiecesCorner(Board, Row, Col, Piece, LeftPiece, BottomPiece, BoardOut).
+	checkEatingPiecesCorner(Board, Row, Col, Piece, LeftPiece, BottomPiece, BoardOut, PiecesEaten).
 	
-checkForEatingBotLeft(Board, Piece, Row, Col, BoardOut) :-
+checkForEatingBotLeft(Board, Piece, Row, Col, BoardOut, PiecesEaten) :-
 	ColRight is Col + 1,
 	RowUp is Row - 1, !,
 
 	getPiece(Board, Row, ColRight, RightPiece),
 	getPiece(Board, RowUp, Col, UpperPiece),
-	checkEatingPiecesCorner(Board, Row, Col, Piece, RightPiece, UpperPiece, BoardOut).
+	checkEatingPiecesCorner(Board, Row, Col, Piece, RightPiece, UpperPiece, BoardOut, PiecesEaten).
 	
-checkForEatingBotRight(Board, Piece, Row, Col, BoardOut) :-
+checkForEatingBotRight(Board, Piece, Row, Col, BoardOut, PiecesEaten) :-
 	ColLeft is Col - 1,
 	RowUp is Row - 1, !,
 
 	getPiece(Board, Row, ColLeft, LeftPiece),
 	getPiece(Board, RowUp, Col, UpperPiece),
-	checkEatingPiecesCorner(Board, Row, Col, Piece, LeftPiece, UpperPiece, BoardOut).
+	checkEatingPiecesCorner(Board, Row, Col, Piece, LeftPiece, UpperPiece, BoardOut, PiecesEaten).
 	
-checkForEatingMiddle(Board, Piece, Row, Col, BoardOut) :-
+checkForEatingMiddle(Board, Piece, Row, Col, BoardOut, PiecesEaten) :-
 	Row > 1, Row < 5,
 	Col > 1, Col < 5,
 	
@@ -336,23 +339,30 @@ checkForEatingMiddle(Board, Piece, Row, Col, BoardOut) :-
 	getPiece(Board, RowDown, Col, BottomPiece),
 	getPiece(Board, Row, ColLeft, LeftPiece),
 	getPiece(Board, Row, ColRight, RightPiece),
-	checkEatingPiecesMiddle(Board, Row, Col, Piece, UpperPiece, BottomPiece, LeftPiece, RightPiece, BoardOut).
+	checkEatingPiecesMiddle(Board, Row, Col, Piece, UpperPiece, BottomPiece, LeftPiece, RightPiece, BoardOut, PiecesEaten).
 	
-updateBoard(BoardIn, CurrPlayer, BoardOut) :-
-	updateRow(BoardIn, CurrPlayer, BoardOut1, 1),
-	updateRow(BoardOut1, CurrPlayer, BoardOut2, 2),
-	updateRow(BoardOut2, CurrPlayer, BoardOut3, 3),
-	updateRow(BoardOut3, CurrPlayer, BoardOut4, 4),
-	updateRow(BoardOut4, CurrPlayer, BoardOut, 5).
+updateBoard(BoardIn, CurrPlayer, BoardOut, CurrPlayerOut) :-
+	updateRow(BoardIn, CurrPlayer, BoardOut1, CurrPlayerOut1, 1),
+	updateRow(BoardOut1, CurrPlayerOut1, BoardOut2, CurrPlayerOut2, 2),
+	updateRow(BoardOut2, CurrPlayerOut2, BoardOut3, CurrPlayerOut3, 3),
+	updateRow(BoardOut3, CurrPlayerOut3, BoardOut4, CurrPlayerOut4, 4),
+	updateRow(BoardOut4, CurrPlayerOut4, BoardOut, CurrPlayerOut, 5).
 	
-updateRow(BoardIn, CurrPlayer, BoardOut, Row) :-
-	nth1(1, CurrPlayer, PlayerName),
-	selectOppNormalPiece(PlayerName, OppPiece),
-	checkForEating(BoardIn, OppPiece, Row, 1, BoardOut1),
-	checkForEating(BoardOut1, OppPiece, Row, 2, BoardOut2),
-	checkForEating(BoardOut2, OppPiece, Row, 3, BoardOut3),
-	checkForEating(BoardOut3, OppPiece, Row, 4, BoardOut4),
-	checkForEating(BoardOut4, OppPiece, Row, 5, BoardOut).
+updateRow(BoardIn, CurrPlayer, BoardOut, CurrPlayerOut, Row) :-
+	getPiece(BoardIn, Row, 1, Piece1),
+	getPiece(BoardIn, Row, 2, Piece2),
+	getPiece(BoardIn, Row, 3, Piece3),
+	getPiece(BoardIn, Row, 4, Piece4),
+	getPiece(BoardIn, Row, 5, Piece5),
+	checkForEating(BoardIn, Piece1, Row, 1, BoardOut1, PiecesEaten1),
+	checkForEating(BoardOut1, Piece2, Row, 2, BoardOut2, PiecesEaten2),
+	checkForEating(BoardOut2, Piece3, Row, 3, BoardOut3, PiecesEaten3),
+	checkForEating(BoardOut3, Piece4, Row, 4, BoardOut4, PiecesEaten4),
+	checkForEating(BoardOut4, Piece5, Row, 5, BoardOut, PiecesEaten5),
+	PiecesEaten is PiecesEaten1 + PiecesEaten2 + PiecesEaten3 + PiecesEaten4 + PiecesEaten5,
+	nth1(5, CurrPlayer, PlayerScore),
+	NewPlayerScore is PlayerScore + PiecesEaten,
+	updatePlayer(CurrPlayer, 5, NewPlayerScore, CurrPlayerOut).
 
 %removes a piece from player, base case
 %removePieceFromPlayer([_, 0, _, _, _], _, _) :- mainMenu.
@@ -368,7 +378,7 @@ removeNormalPieceFromPlayer(Player, PlayerOut) :-
 	NewNormalAmount is NormalAmount - 1,
 	updatePlayer(Player, 2, NewNormalAmount, PlayerOut).
 	
-removeHengePieceFromPlayer([_, _, 0, _], _) :- write('No henge pieces available!'), nl, !, fail.
+removeHengePieceFromPlayer([_, _, 0, _, _], _) :- write('No henge pieces available!'), nl, !, fail.
 	
 removeHengePieceFromPlayer(Player, PlayerOut) :-
 	nth1(3, Player, HengeAmount),
@@ -396,9 +406,10 @@ checkTurnAux(0, Player1, _, CurrPlayer) :- CurrPlayer = Player1, write('White pi
 checkTurnAux(1, _, Player2, CurrPlayer) :- CurrPlayer = Player2, write('Black pieces turn.'), nl.
 		
 %checks if a coordinate is within board bounds
-checkBoardBounds(Row, Col) :-
+checkBoardBounds(Row, Col, Return) :-
 	checkNumberBounds(Row),
-	checkNumberBounds(Col).
+	checkNumberBounds(Col),
+	Return is 1.
 
 %checks if a number is between 1 and 5
 checkNumberBounds(Number) :- Number > 0, Number =< 5.
@@ -435,8 +446,4 @@ setPieceAux([C|Cs], Y, Value, [C|Rs]) :-
 teste :-
 	testBoard(Board),
 	printBoard(Board),
-	get_code(_),
-	checkForEating(Board, 1, 3, 3, BoardOut),
-	write(Board), nl,
-	write(BoardOut), nl,
-	printBoard(BoardOut).
+	get_code(_).
