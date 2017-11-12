@@ -31,6 +31,9 @@ gameLoop(Board, Counter, Player1, Player2) :-
 
 	clearScreen,
 	printBoard(Board),
+	write(Player1), nl,
+	write(Player2), nl,
+	write(Board), nl,
 	
 	write('Press ENTER to continue.'), nl,
 	get_code(_),
@@ -363,6 +366,22 @@ updateRow(BoardIn, CurrPlayer, BoardOut, CurrPlayerOut, Row) :-
 	nth1(5, CurrPlayer, PlayerScore),
 	NewPlayerScore is PlayerScore + PiecesEaten,
 	updatePlayer(CurrPlayer, 5, NewPlayerScore, CurrPlayerOut).
+	
+isThereAvailablePlays(Board, CurrPlayer, Return) :-
+	isThereAvailablePlaysRow(Board, CurrPlayer, 1, Return1),
+	isThereAvailablePlaysRow(Board, CurrPlayer, 2, Return2),
+	isThereAvailablePlaysRow(Board, CurrPlayer, 3, Return3),
+	isThereAvailablePlaysRow(Board, CurrPlayer, 4, Return4),
+	isThereAvailablePlaysRow(Board, CurrPlayer, 5, Return5),
+	Return is Return1 + Return2 + Return3 + Return4 + Return5.
+
+isThereAvailablePlaysRow(Board, CurrPlayer, Row, Return) :-
+	checkBoard(Board, Row, 1, CurrPlayer, Return1),
+	checkBoard(Board, Row, 2, CurrPlayer, Return2),
+	checkBoard(Board, Row, 3, CurrPlayer, Return3),
+	checkBoard(Board, Row, 4, CurrPlayer, Return4),
+	checkBoard(Board, Row, 5, CurrPlayer, Return5),
+	Return is Return1 + Return2 + Return3 + Return4 + Return5.
 
 %removes a piece from player, base case
 %removePieceFromPlayer([_, 0, _, _, _], _, _) :- mainMenu.
@@ -445,5 +464,8 @@ setPieceAux([C|Cs], Y, Value, [C|Rs]) :-
 %teste
 teste :-
 	testBoard(Board),
+	createPlayer(white, 10, 2, Player1, human, 0),
+	createPlayer(black, 10, 2, Player2, human, 0),
 	printBoard(Board),
-	get_code(_).
+	get_code(_),
+	checkBoard(Board, 2, 2, Player2, 1).
