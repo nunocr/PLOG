@@ -40,14 +40,23 @@ gameLoop(Board, -1, [Name1, Pieces1, HengePieces1, bot, Score1], [Name2, Pieces2
 
 %gameloop predicate
 gameLoop(Board, Counter, [Name1, Pieces1, HengePieces1, PlayerType1, Score1], [Name2, Pieces2, HengePieces2, PlayerType2, Score2]) :-
-
 	clearScreen,
 	printBoard(Board),
+	
+	write('Press ENTER to continue'),
+	get_code(_),
+	
 	Counter1 is Counter + 1,
 	write('Current turn: '),
 	write(Counter1), nl,
 	checkTurn(Counter1, [Name1, Pieces1, HengePieces1, PlayerType1, Score1], [Name2, Pieces2, HengePieces2, PlayerType2, Score2], CurrPlayer),
 	printPlayer(CurrPlayer),
+	
+	write(CurrPlayer), nl,
+	setof([Row, Col], checkPlays(Board, Row, Col, CurrPlayer, 1), List),
+	write(List), nl,
+	length(List, NumberOfAvailablePlays),
+	write('Available Plays: '), write(NumberOfAvailablePlays), nl,
 	
 	repeat,
 	askPlay(Board, CurrPlayer, BoardOut, CurrPlayerOut),
@@ -602,8 +611,5 @@ setPieceAux([C|Cs], Y, Value, [C|Rs]) :-
 %teste
 teste :-
 	testBoard(Board),
-	createPlayer(white, 10, 2, Player1, human, 0),
-	createPlayer(black, 10, 2, Player2, human, 0),
 	printBoard(Board),
-	get_code(_),
-	checkBoard(Board, 2, 2, Player2, 1).
+	get_code(_).

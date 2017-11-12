@@ -55,7 +55,7 @@ read(Option),
 (
 	Option =:= 1 -> startGamePvP;
 	Option =:= 2 -> botDifficultyMenu;
-	Option =:= 3 -> botDifficultyMenu;
+	Option =:= 3 -> botDifficultyMenu2;
 	Option =:= 4 -> mainMenu;
 	
 	playMenu
@@ -84,6 +84,19 @@ read(Option),
 (
 	Option =:= 1 -> selectPlayerMenu;
 	Option =:= 2 -> selectPlayerMenu;
+	Option =:= 3 -> difficultyMenu;
+	Option =:= 4 -> playMenu;
+	
+	botDifficultyMenu
+).
+
+botDifficultyMenu2 :-
+clearScreen,
+botDifficultyScreen,
+read(Option),
+(
+	Option =:= 1 -> startGameEvE;
+	Option =:= 2 -> startGameEvE;
 	Option =:= 3 -> difficultyMenu;
 	Option =:= 4 -> playMenu;
 	
