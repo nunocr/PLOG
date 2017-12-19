@@ -6,37 +6,51 @@ professor(4, 'Gertrudes', 'Servicos Domesticos', catedratico, 50).
 professor(5, 'Tony Stark', 'Fisica Nuclear', auxiliar, 100).
 professor(6, 'Ricardo', 'Meio Ambiente', associado, 50).
 professor(7, 'Henrique', 'Inteligencia artifical', associado, 50).
-professor(7, 'Jorge', 'Inteligencia artifical', associado, 50).
- 
+professor(8, 'Jorge', 'Inteligencia artifical', associado, 50).
+
 %areaCientifica(id,nome).
-areaCientifica(1, 'Ciencias da Comunicacao').
-areaCientifica(2, 'Astronomia').
-areaCientifica(4, 'Literacia de Numeracia').
-areaCientifica(8, 'Servicos Domesticos').
-areaCientifica(9, 'Desporto').
-areaCientifica(10, 'Jornalismo').
-areaCientifica(16, 'Fisica Avancada').
-areaCientifica(17, 'Meio ambiente').
-areaCientifica(18, 'Inteligencia artifical').
- 
-%unidadeCurricular(id, nome, horasTeoricas, horasPraticas, idAreaCientifica, idProfessorAssociado)
-unidadeCurricular(1, 'Relacoes Publicas', [3], [4, 4, 2], 1, 1).
-unidadeCurricular(2, 'Cosmologia', [2], [4, 4], 2, 2).
-unidadeCurricular(3, 'Gatologia', [2], [2,2,2], 8, 4).
-unidadeCurricular(4, 'Astronomia Estelar', [4], [3,3,3], 2, 2).
-unidadeCurricular(5, 'Metodos Numericos', [1], [2,2], 4, 1).
-unidadeCurricular(6, 'Laboratorio de fisica', [0], [3,3,3], 16, 2).
-unidadeCurricular(7, 'Probabilidades e Estatistica', [3], [2,2,2], 4, 1).
-unidadeCurricular(8, 'Fisica Termica', [1], [3,3,3], 16, 5).
-unidadeCurricular(9, 'Microbiologia', [2], [3,3], 17, 6).
-unidadeCurricular(10, 'Fisiologia Animal I', [3], [1,1,1], 17, 4).
-unidadeCurricular(11, 'Fisiologia Vegetal', [1], [3,3], 17, 4).
-unidadeCurricular(12, 'Logica computacional', [2], [3,3,3], 18, 7).
-unidadeCurricular(13, 'Metodos de apoio a decisao', [3], [2,2], 18, 7).
-unidadeCurricular(14, 'Basquetebol', [0], [3,3,3,3], 18, 7).
-unidadeCurricular(15, 'Jornais e Revistas', [2], [2,2,2,2], 10, 7).
- 
+areaCientifica(101, 'Ciencias da Comunicacao').
+areaCientifica(102, 'Astronomia').
+areaCientifica(104, 'Literacia de Numeracia').
+areaCientifica(108, 'Servicos Domesticos').
+areaCientifica(109, 'Desporto').
+areaCientifica(110, 'Jornalismo').
+areaCientifica(116, 'Fisica Avancada').
+areaCientifica(117, 'Meio ambiente').
+areaCientifica(118, 'Inteligencia artifical').
+
+%Unidade Curricular
+%UC(id, nome, AreaCientifica, Praticas 1º Semestre, Teoricas 1º Semestre, Praticas 2º Semestre, Teoricas 2º Semestre)
+unidadeCurricular(201, 'Relacoes Publicas', 101, 20, 5, 20, 5).
+unidadeCurricular(202, 'Cosmologia', 102, 30, 5, 30, 5).
+unidadeCurricular(203, 'Gatologia', 104, 15, 5, 15, 5).
+unidadeCurricular(204, 'Astronomia Estelar', 102, 10, 5, 10, 5).
+unidadeCurricular(205, 'Metodos Numericos', 116, 5, 5, 5, 5).
+unidadeCurricular(206, 'Laboratorio de fisica', 116, 20, 4, 20, 4).
+unidadeCurricular(207, 'Probabilidades e Estatistica', 108, 5, 5, 5, 5).
+unidadeCurricular(208, 'Fisica Termica', 116, 10, 5, 10, 5).
+unidadeCurricular(209, 'Microbiologia', 117, 20, 10, 20, 10).
+unidadeCurricular(210, 'Fisiologia Animal I', 117, 20, 10, 20, 10).
+unidadeCurricular(211, 'Fisiologia Vegetal', 117, 20, 10, 20, 10).
+unidadeCurricular(212, 'Logica computacional', 118, 15, 5, 15, 5).
+unidadeCurricular(213, 'Metodos de apoio a decisao', 108, 5, 5, 5, 5).
+unidadeCurricular(214, 'Basquetebol', 109, 20, 5, 20, 5).
+unidadeCurricular(215, 'Jornais e Revistas', 110, 5, 5, 5, 5).
+
 %tipoProfessor(tipo, cargaHoraria)
 tipoProfessor(catedratico, 7).
 tipoProfessor(associado, 8).
 tipoProfessor(auxiliar, 9).
+
+%Lista de lista de cenas e tal
+%Linhas = Professores
+%Colunas = UCs
+%Cada professor tem uma lista de todas as UCs da base de dados.
+%Se o professor nao lecciona essa UC, os seus parametros de Horas Teoricas e Praticas sera 0s
+%A soma dos elementos de uma coluna sera o total das praticas/teoricas, para cada semestre
+
+ProfsUcsBoard([[0, 0, 0, 0, 0],
+		           [0, 0, 0, 0, 0],
+		           [0, 0, 0, 0, 0],
+		           [0, 0, 0, 0, 0],
+		           [0, 0, 0, 0, 0]]).
