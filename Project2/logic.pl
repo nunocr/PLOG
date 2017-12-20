@@ -38,24 +38,33 @@ getMinPracticalClassTime(ClassID, MinTime) :-
 getMinTheoricalClassTime(ClassID, MinTime) :-
 	unidadeCurricular(ClassID, _, _, _, _, TheoricalHoursList),
 	min_list(TheoricalHoursList, MinTime).
-	
-restrictClassArea(SolutionMatrix, CurrRow, CurrCol, CurrRowSolution, CurrClass) :-
-	nth1(CurrRow, SolutionMatrix, CurrRowSolution),
-	restrictClassArea1(CurrRowSolution, CurrRow, CurrCol, CurrClass).
-	
-restrictClassArea1(SolutionRow, CurrRow, CurrCol, CurrClass) :-
-	nth1(CurrCol, SolutionRow, CurrClass),
-	restrictClassArea2(CurrClass, CurrRow, CurrCol).
-	
-restrictClassArea2(CurrClass, CurrRow, CurrCol) :-
+		
+restrictClassArea([], _, _, []) :- write('Entrei'), nl.
+restrictClassArea([H|T], CurrRow, CurrCol, [C|S]) :-
+	restrictClassArea1(H, CurrRow, CurrCol, C),
+	restrictClassArea(T, CurrRow, CurrCol, S).
+
+restrictClassArea1([], _, _, []) :- write('Entrei1'), nl.	
+restrictClassArea1([H|T], CurrRow, CurrCol, [C|S]) :-
+	restrictClassArea2(H, CurrRow, CurrCol, C),
+	restrictClassArea1(T, CurrRow, CurrCol, S).
+
+restrictClassArea2([], _, _, []) :- write('Entrei2'), nl.
+restrictClassArea2([H|T], CurrRow, CurrCol, [C|S]) :-
 	professor(CurrRow, _, ProfArea, _, _),
 	unidadeCurricular(CurrCol, _, ClassArea, _, _, _),
-	nth1(1, CurrClass, Practical),
-	nth1(2, CurrClass, Theorical),
-	ProfArea \= ClassArea, 
-	Theorical = 0.
+	write('ProfArea: '), write(ProfArea), nl,
+	write('ClassArea: '), write(ClassArea), nl,
+	ProfArea \== ClassArea, 
+	C = H,
+	S = 0.
 	
-restrictClassArea2(_, _, _).
+restrictClassArea2([Practical|Theorical], CurrRow, CurrCol, [C|S]) :-
+	professor(CurrRow, _, ProfArea, _, _),
+	unidadeCurricular(CurrCol, _, ClassArea, _, _, _),
+	ProfArea == ClassArea,
+	C = Practical,
+	S = Theorical.
 	
 teste :-
 	getProfsList(L),
@@ -64,7 +73,7 @@ teste :-
 	length(L1, Columns),
 	Rows1 is Rows + 1,
 	printPossibleClasses(1, Rows1, L2),
-	restrictClassArea(L2, 1, 2, Teste, Teste1),
-	%write(Teste), nl,
+	restrictClassArea(L2, 1, 1, Teste),
+	write(Teste), nl,
 	%write(Teste1), nl,
-	write(L2).
+	write(L2), nl.
