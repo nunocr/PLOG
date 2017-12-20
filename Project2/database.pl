@@ -21,21 +21,21 @@ areaCientifica(118, 'Inteligencia artifical').
 
 %Unidade Curricular
 %UC(id, nome, AreaCientifica, semestre, horasPraticas, horasTeoricas)
-unidadeCurricular(201, 'Relacoes Publicas', 101, 1, 20, 5).
-unidadeCurricular(202, 'Cosmologia', 102, 1, 30, 5).
-unidadeCurricular(203, 'Gatologia', 104, 1, 15, 5).
-unidadeCurricular(204, 'Astronomia Estelar', 102, 2, 10, 5).
-unidadeCurricular(205, 'Metodos Numericos', 116, 1, 5, 5).
-unidadeCurricular(206, 'Laboratorio de fisica', 116, 1, 20, 4).
-unidadeCurricular(207, 'Probabilidades e Estatistica', 108, 1, 5, 5).
-unidadeCurricular(208, 'Fisica Termica', 116, 2, 10, 5).
-unidadeCurricular(209, 'Microbiologia', 117, 1, 20, 10).
-unidadeCurricular(210, 'Fisiologia Animal I', 117, 2, 20, 10).
-unidadeCurricular(211, 'Fisiologia Vegetal', 117, 2, 20, 10).
-unidadeCurricular(212, 'Logica computacional', 118, 2, 15, 5).
-unidadeCurricular(213, 'Metodos de apoio a decisao', 108, 2, 5, 5).
-unidadeCurricular(214, 'Basquetebol', 109, 2, 20, 5).
-unidadeCurricular(215, 'Jornais e Revistas', 110, 2, 5, 5).
+unidadeCurricular(201, 'Relacoes Publicas', 101, 1, [2, 2, 2], [2, 2]).
+unidadeCurricular(202, 'Cosmologia', 102, 1, [3, 3], [2]).
+unidadeCurricular(203, 'Gatologia', 104, 1, [2, 2], [3]).
+unidadeCurricular(204, 'Astronomia Estelar', 102, 2, [3, 3, 3], [2, 2]).
+unidadeCurricular(205, 'Metodos Numericos', 116, 1, [4, 2], [2, 2]).
+unidadeCurricular(206, 'Laboratorio de fisica', 116, 1, [2, 2, 2], [3]).
+unidadeCurricular(207, 'Probabilidades e Estatistica', 108, 1, [2, 2], [1]).
+unidadeCurricular(208, 'Fisica Termica', 116, 2, [2, 2, 2, 2], [3, 3]).
+unidadeCurricular(209, 'Microbiologia', 117, 1, [3, 3, 3], [4, 2]).
+unidadeCurricular(210, 'Fisiologia Animal I', 117, 2, [2, 2, 2], [2, 2]).
+unidadeCurricular(211, 'Fisiologia Vegetal', 117, 2, [4, 4], [2, 2]).
+unidadeCurricular(212, 'Logica computacional', 118, 2, [3, 3, 3], [2, 2]).
+unidadeCurricular(213, 'Metodos de apoio a decisao', 108, 2, [2, 2, 2], [1, 1]).
+unidadeCurricular(214, 'Basquetebol', 109, 2, [4, 4], [2]).
+unidadeCurricular(215, 'Jornais e Revistas', 110, 2, [1, 1, 1], [1]).
 
 %tipoProfessor(ID, tipo, cargaHoraria)
 tipoProfessor(301, 'catedratico', 7).

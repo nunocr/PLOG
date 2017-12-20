@@ -8,31 +8,44 @@ calculateSemesterHours(ProfID, HoursFirstSemester, HoursSecondSemester) :-
 	tipoProfessor(ProfTypeID, _, Hours),
 	TotalHours is Hours * 2,
 	HoursFirstSemester is (100 - ProfDistributionPreference)/100 * TotalHours,
-	HoursSecondSemester is ProfDistributionPreference/100 * TotalHours,
-	write('Professor '), write(ProfName), write(' is giving '), 
-	write(HoursFirstSemester), write(' weekly hours in the 1st semester, and '), 
-	write(HoursSecondSemester), write(' weekly hours in the 2nd semester.'), nl.
+	HoursSecondSemester is ProfDistributionPreference/100 * TotalHours.
 	
-getAllProfsFromScientificArea(ScientificAreaID, List) :-
-	setof([ProfID, ProfName, ProfScientificAreaID, ProfTypeID, ProfPreference], (professor(ProfID, ProfName, ProfScientificAreaID, ProfTypeID, ProfPreference), ProfScientificAreaID #= ScientificAreaID), List).
+getProfsList(List) :-
+	setof([A, B, C, D, E], professor(A, B, C, D, E), List).
 	
-getAllClassesFromScientificArea(ScientificAreaID, List) :-
-	setof([ClassID, ClassName, ClassScientificAreaID, ClassSemester, ClassPracticalHours, ClassTheoricalHours], (unidadeCurricular(ClassID, ClassName, ClassScientificAreaID, ClassSemester, ClassPracticalHours, ClassTheoricalHours), ClassScientificAreaID #= ScientificAreaID), List).
-	
-getAllFirstSemesterClasses(List) :-
-	setof([ClassID, ClassName, ClassScientificAreaID, ClassSemester, ClassPracticalHours, ClassTheoricalHours], (unidadeCurricular(ClassID, ClassName, ClassScientificAreaID, ClassSemester, ClassPracticalHours, ClassTheoricalHours), ClassSemester #= 1), List).
+getClassesList(List) :-
+	setof([A, B, C, D, E, F], unidadeCurricular(A, B, C, D, E, F), List).
 
-getAllProfs(List) :-
-	setof([A, B, C, D, E], professor(A, B, C, D, E), List).	
+getProfPossibleClasses(List) :-
+	findall([_, _], unidadeCurricular(_A, _B, _C, _D, _E, _F), List).
+
+printPossibleClasses(Rows, Rows, []).
+printPossibleClasses(CurrID, MaxID, [H|T]) :-
+	getProfPossibleClasses(H),
+	%write(CurrID), write('     '), write(H), nl,
+	NextID is CurrID + 1,
+	printPossibleClasses(NextID, MaxID, T).
 	
-getAllProfsPossibleClasses([]).
-getAllProfsPossibleClasses([[ProfID, ProfName, ProfScientificAreaID, _, _]|T]) :-
-	calculateSemesterHours(ProfID, _HoursFirstSemester, _HoursSecondSemester),
-	getAllClassesFromScientificArea(ProfScientificAreaID, ClassesList),
-	write('Professor '), write(ProfName), write(' can teach '), write(ClassesList), nl, nl,
-	getAllProfsPossibleClasses(T).
+getTotalClassHours(ClassID, PracticalHours, TheoricalHours) :-
+	unidadeCurricular(ClassID, _, _, _, PracticalHoursList, TheoricalHoursList),
+	sumlist(PracticalHoursList, TotalPracticalHours),
+	sumlist(TheoricalHoursList, TotalTheoricalHours).
+	
+getMinPracticalClassTime(ClassID, MinTime) :-
+	unidadeCurricular(ClassID, _, _, _, PracticalHoursList, _),
+	min_list(PracticalHoursList, MinTime).
+	
+getMinTheoricalClassTime(ClassID, MinTime) :-
+	unidadeCurricular(ClassID, _, _, _, _, TheoricalHoursList),
+	min_list(TheoricalHoursList, MinTime).
+	
+restrictClassArea(SolutionMatrix).
 	
 teste :-
-	getAllProfs(List),
-	getAllProfsPossibleClassesWithSemesterRestrictions(List),
-	write(List), nl.
+	getProfsList(L),
+	length(L, Rows),
+	getClassesList(L1),
+	length(L1, Columns),
+	Rows1 is Rows + 1,
+	printPossibleClasses(1, Rows1, L2),
+	getTotalClassHours(_, _, _).
