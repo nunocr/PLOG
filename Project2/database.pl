@@ -1,46 +1,46 @@
 %professor(id, nome, areaCientifica, tipoProfessor, preferenciaHorario[varia entre 0 e 100, 0 -> mais carregado no 1º semestre, 50 -> even, 100 -> mais carregado no 2º semestre])
-professor(1, 'Anabela', 101, 301, 60).
-professor(2, 'Josefina', 102, 302, 0).
-professor(3, 'Bonifacio', 104, 303, 100).
-professor(4, 'Gertrudes', 108, 301, 50).
-professor(5, 'Tony Stark', 116, 303, 100).
-professor(6, 'Ricardo', 117, 302, 50).
-professor(7, 'Henrique', 118, 302, 50).
-professor(8, 'Jorge', 118, 302, 50).
+professor(1, 'Anabela', 1, 1, 60).
+professor(2, 'Josefina', 2, 2, 0).
+professor(3, 'Bonifacio', 3, 3, 100).
+professor(4, 'Gertrudes', 4, 1, 50).
+professor(5, 'Tony Stark', 7, 3, 100).
+professor(6, 'Ricardo', 8, 2, 50).
+professor(7, 'Henrique', 9, 2, 50).
+professor(8, 'Jorge', 9, 2, 50).
 
 %areaCientifica(id,nome).
-areaCientifica(101, 'Ciencias da Comunicacao').
-areaCientifica(102, 'Astronomia').
-areaCientifica(104, 'Literacia de Numeracia').
-areaCientifica(108, 'Servicos Domesticos').
-areaCientifica(109, 'Desporto').
-areaCientifica(110, 'Jornalismo').
-areaCientifica(116, 'Fisica Avancada').
-areaCientifica(117, 'Meio ambiente').
-areaCientifica(118, 'Inteligencia artifical').
+areaCientifica(1, 'Ciencias da Comunicacao').
+areaCientifica(2, 'Astronomia').
+areaCientifica(3, 'Literacia de Numeracia').
+areaCientifica(4, 'Servicos Domesticos').
+areaCientifica(5, 'Desporto').
+areaCientifica(6, 'Jornalismo').
+areaCientifica(7, 'Fisica Avancada').
+areaCientifica(8, 'Meio ambiente').
+areaCientifica(9, 'Inteligencia artifical').
 
 %Unidade Curricular
 %UC(id, nome, AreaCientifica, semestre, horasPraticas, horasTeoricas)
-unidadeCurricular(201, 'Relacoes Publicas', 101, 1, [2, 2, 2], [2, 2]).
-unidadeCurricular(202, 'Cosmologia', 102, 1, [3, 3], [2]).
-unidadeCurricular(203, 'Gatologia', 104, 1, [2, 2], [3]).
-unidadeCurricular(204, 'Astronomia Estelar', 102, 2, [3, 3, 3], [2, 2]).
-unidadeCurricular(205, 'Metodos Numericos', 116, 1, [4, 2], [2, 2]).
-unidadeCurricular(206, 'Laboratorio de fisica', 116, 1, [2, 2, 2], [3]).
-unidadeCurricular(207, 'Probabilidades e Estatistica', 108, 1, [2, 2], [1]).
-unidadeCurricular(208, 'Fisica Termica', 116, 2, [2, 2, 2, 2], [3, 3]).
-unidadeCurricular(209, 'Microbiologia', 117, 1, [3, 3, 3], [4, 2]).
-unidadeCurricular(210, 'Fisiologia Animal I', 117, 2, [2, 2, 2], [2, 2]).
-unidadeCurricular(211, 'Fisiologia Vegetal', 117, 2, [4, 4], [2, 2]).
-unidadeCurricular(212, 'Logica computacional', 118, 2, [3, 3, 3], [2, 2]).
-unidadeCurricular(213, 'Metodos de apoio a decisao', 108, 2, [2, 2, 2], [1, 1]).
-unidadeCurricular(214, 'Basquetebol', 109, 2, [4, 4], [2]).
-unidadeCurricular(215, 'Jornais e Revistas', 110, 2, [1, 1, 1], [1]).
+unidadeCurricular(1, 'Relacoes Publicas', 1, 1, [2, 2, 2], [2, 2]).
+unidadeCurricular(2, 'Cosmologia', 2, 1, [3, 3], [2]).
+unidadeCurricular(3, 'Gatologia', 3, 1, [2, 2], [3]).
+unidadeCurricular(4, 'Astronomia Estelar', 2, 2, [3, 3, 3], [2, 2]).
+unidadeCurricular(5, 'Metodos Numericos', 7, 1, [4, 2], [2, 2]).
+unidadeCurricular(6, 'Laboratorio de fisica', 7, 1, [2, 2, 2], [3]).
+unidadeCurricular(7, 'Probabilidades e Estatistica', 4, 1, [2, 2], [1]).
+unidadeCurricular(8, 'Fisica Termica', 7, 2, [2, 2, 2, 2], [3, 3]).
+unidadeCurricular(9, 'Microbiologia', 8, 1, [3, 3, 3], [4, 2]).
+unidadeCurricular(10, 'Fisiologia Animal I', 8, 2, [2, 2, 2], [2, 2]).
+unidadeCurricular(11, 'Fisiologia Vegetal', 8, 2, [4, 4], [2, 2]).
+unidadeCurricular(12, 'Logica computacional', 9, 2, [3, 3, 3], [2, 2]).
+unidadeCurricular(13, 'Metodos de apoio a decisao', 4, 2, [2, 2, 2], [1, 1]).
+unidadeCurricular(14, 'Basquetebol', 5, 2, [4, 4], [2]).
+unidadeCurricular(15, 'Jornais e Revistas', 6, 2, [1, 1, 1], [1]).
 
 %tipoProfessor(ID, tipo, cargaHoraria)
-tipoProfessor(301, 'catedratico', 7).
-tipoProfessor(302, 'associado', 8).
-tipoProfessor(303, 'auxiliar', 9).
+tipoProfessor(1, 'catedratico', 7).
+tipoProfessor(2, 'associado', 8).
+tipoProfessor(3, 'auxiliar', 9).
 
 %Lista de lista de cenas e tal
 %Linhas = Professores

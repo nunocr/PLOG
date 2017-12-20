@@ -39,7 +39,23 @@ getMinTheoricalClassTime(ClassID, MinTime) :-
 	unidadeCurricular(ClassID, _, _, _, _, TheoricalHoursList),
 	min_list(TheoricalHoursList, MinTime).
 	
-restrictClassArea(SolutionMatrix).
+restrictClassArea(SolutionMatrix, CurrRow, CurrCol, CurrRowSolution, CurrClass) :-
+	nth1(CurrRow, SolutionMatrix, CurrRowSolution),
+	restrictClassArea1(CurrRowSolution, CurrRow, CurrCol, CurrClass).
+	
+restrictClassArea1(SolutionRow, CurrRow, CurrCol, CurrClass) :-
+	nth1(CurrCol, SolutionRow, CurrClass),
+	restrictClassArea2(CurrClass, CurrRow, CurrCol).
+	
+restrictClassArea2(CurrClass, CurrRow, CurrCol) :-
+	professor(CurrRow, _, ProfArea, _, _),
+	unidadeCurricular(CurrCol, _, ClassArea, _, _, _),
+	nth1(1, CurrClass, Practical),
+	nth1(2, CurrClass, Theorical),
+	ProfArea \= ClassArea, 
+	Theorical = 0.
+	
+restrictClassArea2(_, _, _).
 	
 teste :-
 	getProfsList(L),
@@ -48,4 +64,7 @@ teste :-
 	length(L1, Columns),
 	Rows1 is Rows + 1,
 	printPossibleClasses(1, Rows1, L2),
-	getTotalClassHours(_, _, _).
+	restrictClassArea(L2, 1, 2, Teste, Teste1),
+	%write(Teste), nl,
+	%write(Teste1), nl,
+	write(L2).
