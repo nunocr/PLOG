@@ -43,6 +43,7 @@ restrictClassArea([], _, _, []).
 restrictClassArea([H|T], CurrRow, CurrCol, [C|S]) :-
 	restrictClassArea1(H, CurrRow, CurrCol, C),
 	NextRow is CurrRow + 1,
+	write(C), nl,
 	restrictClassArea(T, NextRow, CurrCol, S).
 
 restrictClassArea1([], _, _, []).
@@ -77,7 +78,6 @@ teste :-
 	length(L1, Columns),
 	Rows1 is Rows + 1,
 	printPossibleClasses(1, Rows1, L2),
-	restrictClassArea(L2, 1, 1, Teste),
-	write(Teste), nl,
-	%write(Teste1), nl,
-	write(L2), nl.
+	restrictClassArea(L2, 1, 1, Teste).
+	%write(Teste), nl,
+	%write(L2), nl.
