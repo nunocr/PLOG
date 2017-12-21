@@ -55,7 +55,7 @@ restrictClassArea1([H|T], CurrRow, CurrCol, [C|S]) :-
 	restrictClassArea1(T, CurrRow, NextCol, S).
 
 restrictClassArea2([], _, _, []).
-restrictClassArea2([H|T], CurrRow, CurrCol, [C|S]) :-
+restrictClassArea2([H|T], CurrRow, CurrCol, [C,S]) :-
 	professor(CurrRow, _, ProfArea, _, _),
 	unidadeCurricular(CurrCol, _, ClassArea, _, _, _),
 	%write('ProfArea: '), write(ProfArea), nl,
