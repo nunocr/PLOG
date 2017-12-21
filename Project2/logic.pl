@@ -43,7 +43,7 @@ restrictClassArea([], _, _, []).
 restrictClassArea([H|T], CurrRow, CurrCol, [C|S]) :-
 	restrictClassArea1(H, CurrRow, CurrCol, C),
 	NextRow is CurrRow + 1,
-	write(C), nl,
+	%write(C), nl,
 	restrictClassArea(T, NextRow, CurrCol, S).
 
 restrictClassArea1([], _, _, []).
@@ -55,7 +55,7 @@ restrictClassArea1([H|T], CurrRow, CurrCol, [C|S]) :-
 	restrictClassArea1(T, CurrRow, NextCol, S).
 
 restrictClassArea2([], _, _, []).
-restrictClassArea2([H|T], CurrRow, CurrCol, [C,S]) :-
+restrictClassArea2([H,T], CurrRow, CurrCol, [C,S]) :-
 	professor(CurrRow, _, ProfArea, _, _),
 	unidadeCurricular(CurrCol, _, ClassArea, _, _, _),
 	%write('ProfArea: '), write(ProfArea), nl,
@@ -64,7 +64,7 @@ restrictClassArea2([H|T], CurrRow, CurrCol, [C,S]) :-
 	C = H,
 	S = 0.
 	
-restrictClassArea2([Practical|Theorical], CurrRow, CurrCol, [C|S]) :-
+restrictClassArea2([Practical,Theorical], CurrRow, CurrCol, [C,S]) :-
 	professor(CurrRow, _, ProfArea, _, _),
 	unidadeCurricular(CurrCol, _, ClassArea, _, _, _),
 	ProfArea == ClassArea,
@@ -78,6 +78,6 @@ teste :-
 	length(L1, Columns),
 	Rows1 is Rows + 1,
 	printPossibleClasses(1, Rows1, L2),
-	restrictClassArea(L2, 1, 1, Teste).
-	%write(Teste), nl,
-	%write(L2), nl.
+	restrictClassArea(L2, 1, 1, Teste),
+	write(Teste), nl,
+	write(L2), nl.
