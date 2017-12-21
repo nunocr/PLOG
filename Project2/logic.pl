@@ -39,22 +39,26 @@ getMinTheoricalClassTime(ClassID, MinTime) :-
 	unidadeCurricular(ClassID, _, _, _, _, TheoricalHoursList),
 	min_list(TheoricalHoursList, MinTime).
 		
-restrictClassArea([], _, _, []) :- write('Entrei'), nl.
+restrictClassArea([], _, _, []).
 restrictClassArea([H|T], CurrRow, CurrCol, [C|S]) :-
 	restrictClassArea1(H, CurrRow, CurrCol, C),
-	restrictClassArea(T, CurrRow, CurrCol, S).
+	NextRow is CurrRow + 1,
+	restrictClassArea(T, NextRow, CurrCol, S).
 
-restrictClassArea1([], _, _, []) :- write('Entrei1'), nl.	
+restrictClassArea1([], _, _, []).
 restrictClassArea1([H|T], CurrRow, CurrCol, [C|S]) :-
+	%write('Editing: '), write(H), nl,
+	%write('List Tail: '), write(T), nl,
 	restrictClassArea2(H, CurrRow, CurrCol, C),
-	restrictClassArea1(T, CurrRow, CurrCol, S).
+	NextCol is CurrCol + 1,
+	restrictClassArea1(T, CurrRow, NextCol, S).
 
-restrictClassArea2([], _, _, []) :- write('Entrei2'), nl.
+restrictClassArea2([], _, _, []).
 restrictClassArea2([H|T], CurrRow, CurrCol, [C|S]) :-
 	professor(CurrRow, _, ProfArea, _, _),
 	unidadeCurricular(CurrCol, _, ClassArea, _, _, _),
-	write('ProfArea: '), write(ProfArea), nl,
-	write('ClassArea: '), write(ClassArea), nl,
+	%write('ProfArea: '), write(ProfArea), nl,
+	%write('ClassArea: '), write(ClassArea), nl,
 	ProfArea \== ClassArea, 
 	C = H,
 	S = 0.
