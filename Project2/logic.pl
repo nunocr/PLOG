@@ -180,7 +180,7 @@ teste :-
 
 	%trace,
 	restrictClassHours(Ucs1, 1, 1),
-	restrictClassHours2sem(Ucs2, 1, 1),
+	restrictClassHoursSemester2(Ucs2, 1, 1),
 	%fd_set(Elem,Set),
 	%fdset_to_list(Set,X),
 	%write(X),nl,
