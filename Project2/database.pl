@@ -28,7 +28,7 @@ areaCientifica(8, 'Meio ambiente').
 areaCientifica(9, 'Inteligencia artifical').
 
 %Unidade Curricular
-%UC(id, nome, AreaCientifica, semestre, horasPraticas, horasTeoricas)
+%UC(id, nome, AreaCientifica, horasPraticas, horasTeoricas)
 unidadeCurricular(1, 'Relacoes Publicas'			, 1, 6, 4).
 unidadeCurricular(2, 'Cosmologia'					, 2, 6, 2).
 unidadeCurricular(3, 'Gatologia'					, 3, 4, 3).
@@ -39,11 +39,11 @@ unidadeCurricular(3, 'Gatologia'					, 3, 4, 3).
 
 unidadeCurricular2(1, 'Fisica Termica'				, 7, 8, 6).
 unidadeCurricular2(2, 'Fisiologia Animal I'			, 8, 6, 4).
-%unidadeCurricular2(3, 'Fisiologia Vegetal'			, 8, 8, 4).
-%unidadeCurricular2(5, 'Metodos de apoio a decisao'	, 4, 6, 2).
-%unidadeCurricular2(6, 'Basquetebol'					, 5, 8, 2).
-%unidadeCurricular2(7, 'Jornais e Revistas'			, 6, 3, 1).
-%unidadeCurricular2(8, 'Astronomia Estelar'			, 2, 9, 4).
+unidadeCurricular2(3, 'Fisiologia Vegetal'			, 8, 8, 4).
+%unidadeCurricular2(4, 'Metodos de apoio a decisao'	, 4, 6, 2).
+%unidadeCurricular2(5, 'Basquetebol'					, 5, 8, 2).
+%unidadeCurricular2(6, 'Jornais e Revistas'			, 6, 3, 1).
+%unidadeCurricular2(7, 'Astronomia Estelar'			, 2, 9, 4).
 
 %tipoProfessor(ID, tipo, cargaHoraria)
 tipoProfessor(1, 'catedratico', 7).

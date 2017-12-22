@@ -74,6 +74,8 @@ restrictClassArea1([H|T], CurrRow, CurrCol) :-
 
 restrictClassArea2([], _, _ ).
 restrictClassArea2([H,T], CurrRow, CurrCol) :-
+	%write('CurrRow: '), write(CurrRow), nl,
+	%write('CurrCol: '), write(CurrCol), nl,
 	professor(CurrRow, _, ProfArea, _, _),
 	unidadeCurricular(CurrCol, _, ClassArea, _, _),
 	ProfArea \= ClassArea,
@@ -104,54 +106,53 @@ restrictClassHours1([[P,T]|List],CurrRow,CurrCol,NewTheoCounter,NewPracCounter):
 
 %-------------------------------------------------------------------2º semester
 
-
-
-	% [Pratical, Theoretical]
-restrictClassArea2sem([], _, _, []).
-restrictClassArea2sem([H|T], CurrRow, CurrCol, [Carga | Cargas]) :-
-	restrictClassArea12sem(H, CurrRow, CurrCol),
+restrictClassAreaSemester2([], _, _,[]).
+restrictClassAreaSemester2([H|T], CurrRow, CurrCol, [Carga | Cargas]) :-
+	restrictClassArea1Semester2(H, CurrRow, CurrCol),
 	append(H,Hours),
 	 %valor a usar para otimização - valor de carga semanal de um semestre
 	NextRow is CurrRow + 1,
-	restrictClassArea2sem(T, NextRow, CurrCol, Cargas),
-	sum(Hours, #=, Carga),
-	%write('Carga: '), write(Cargas), nl.
+	restrictClassAreaSemester2(T, NextRow, CurrCol, Cargas),
+	sum(Hours, #=, Carga).
 
-restrictClassArea12sem([], _, _).
-restrictClassArea12sem([H|T], CurrRow, CurrCol) :-
-	restrictClassArea22sem(H, CurrRow, CurrCol),
+restrictClassArea1Semester2([], _, _).
+restrictClassArea1Semester2([H|T], CurrRow, CurrCol) :-
+	restrictClassArea2Semester2(H, CurrRow, CurrCol),
 	NextCol is CurrCol + 1,
-	restrictClassArea12sem(T, CurrRow, NextCol).
+	restrictClassArea1Semester2(T, CurrRow, NextCol).
 
 
 
-restrictClassArea22sem([], _, _ ).
-restrictClassArea22sem([H,T], CurrRow, CurrCol) :-
+restrictClassArea2Semester2([], _, _ ).
+restrictClassArea2Semester2([H,T], CurrRow, CurrCol) :-
+	write('CurrRow: '), write(CurrRow), nl,
+	write('CurrCol: '), write(CurrCol), nl,
 	professor(CurrRow, _, ProfArea, _, _),
 	unidadeCurricular2(CurrCol, _, ClassArea, _, _),
 	ProfArea \= ClassArea,
 	T #= 0.
-restrictClassArea22sem([_,T], _, _).
+restrictClassArea2Semester2([_,T], _, _).
 
 
-restrictClassHours2sem([],_,_).
-restrictClassHours2sem([H|T],CurrRow,CurrCol):-
+restrictClassHoursSemester2([],_,_).
+restrictClassHoursSemester2([H|T],CurrRow,CurrCol):-
 	unidadeCurricular2(CurrRow, _, _, HP, HT),
 
-restrictClassHours12sem(H,CurrRow,CurrCol,TheoCounter,PracCounter),
+	restrictClassHours1Semester2(H,CurrRow,CurrCol,TheoCounter,PracCounter),
 	PracCounter #= HP,
 	TheoCounter #= HT,
 
 	NextRow is CurrRow + 1,
-	restrictClassHours2sem(T,NextRow,CurrCol).
+	restrictClassHoursSemester2(T,NextRow,CurrCol).
 
-	%[Prof1,Prof2]
-restrictClassHours12sem([],_,_,0,0).
-restrictClassHours12sem([[P,T]|List],CurrRow,CurrCol,NewTheoCounter,NewPracCounter):-
+%[Prof1,Prof2]
+restrictClassHours1Semester2([],_,_,0,0).
+restrictClassHours1Semester2([[P,T]|List],CurrRow,CurrCol,NewTheoCounter,NewPracCounter):-
 	NextCol is CurrCol + 1,
-	restrictClassHours12sem(List,CurrRow,NextCol,TheoCounter2,PracCounter2),
+	restrictClassHours1Semester2(List,CurrRow,NextCol,TheoCounter2,PracCounter2),
 	NewPracCounter #= PracCounter2 + P,
 	NewTheoCounter #= TheoCounter2 + T.
+
 
 
 restrictScheduleBurden([], [], _).
@@ -194,10 +195,10 @@ teste :-
 	%fdset_to_list(Set,X),
 	%write(X),nl,
 	restrictClassArea(Sem1, 1, 1, ProfsHours1),
-	restrictClassArea2sem(Sem2, 1, 1, ProfsHours2),
+	restrictClassAreaSemester2(Sem2, 1, 1, ProfsHours2),
 	%write(ProfHours1), nl,
 	%write(ProfHours2), nl,
-%trace,
+	%trace,
 	restrictScheduleBurden(ProfsHours1, ProfsHours2, 1),
 
 
