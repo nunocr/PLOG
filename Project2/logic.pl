@@ -193,6 +193,6 @@ teste :-
 
 
 	%write(L2),nl,
-	labeling([],TesteLabel),
+	labeling([time_out(8000, _)],TesteLabel),
 	write(Sem1), nl, nl, nl,
 	write(Sem2),nl.
