@@ -3,12 +3,18 @@
 :-include('database').
 
 
-calculateSemesterHours(ProfID, HoursFirstSemester, HoursSecondSemester) :-
+calculateFirstSemesterHours(ProfID, HoursFirstSemester) :-
 	professor(ProfID, ProfName, _ProfArea, ProfTypeID, ProfDistributionPreference),
 	tipoProfessor(ProfTypeID, _, Hours),
 	TotalHours is Hours * 2,
-	HoursFirstSemester is (100 - ProfDistributionPreference)/100 * TotalHours,
-	HoursSecondSemester is ProfDistributionPreference/100 * TotalHours.
+	HoursFirstSemester is (100 - ProfDistributionPreference) * TotalHours.
+	%HoursSecondSemester is ProfDistributionPreference * TotalHours.
+
+calculateSecondSemesterHours(ProfID, HoursSecondSemester) :-
+	professor(ProfID, ProfName, _ProfArea, ProfTypeID, ProfDistributionPreference),
+	tipoProfessor(ProfTypeID, _, Hours),
+	TotalHours is Hours * 2,
+	HoursSecondSemester is ProfDistributionPreference * TotalHours.
 
 getProfsList(List) :-
 	setof([A, B, C, D, E], professor(A, B, C, D, E), List).
@@ -55,33 +61,35 @@ getMinTheoricalClassTime(ClassID, MinTime) :-
 
 % [Pratical, Theoretical]
 
-restrictClassArea([], _, _,[]).
-restrictClassArea([H|T], CurrRow, CurrCol, [Carga | Cargas]) :-
-	restrictClassArea1(H, CurrRow, CurrCol),
+restrictClassArea([], _, _, [], 0).
+restrictClassArea([H|T], CurrRow, CurrCol, [Carga | Cargas], OutOfAreaCount) :-
+	restrictClassArea1(H, CurrRow, CurrCol, OutOfAreaValue),
 	append(H,Hours),
 	NextRow is CurrRow + 1,
-	restrictClassArea(T, NextRow, CurrCol, Cargas),
-	sum(Hours, #=, Carga).
+	restrictClassArea(T, NextRow, CurrCol, Cargas, NewOutOfAreaCount),
+	sum(Hours, #=, Carga),
+	OutOfAreaCount #= NewOutOfAreaCount + OutOfAreaValue.
 
-restrictClassArea1([], _, _).
-restrictClassArea1([H|T], CurrRow, CurrCol) :-
-	restrictClassArea2(H, CurrRow, CurrCol),
+restrictClassArea1([], _, _, 0).
+restrictClassArea1([H|T], CurrRow, CurrCol, OutOfAreaCount) :-
+	restrictClassArea2(H, CurrRow, CurrCol, OutOfAreaValue),
 	NextCol is CurrCol + 1,
-	restrictClassArea1(T, CurrRow, NextCol).
+	restrictClassArea1(T, CurrRow, NextCol, NewOutOfAreaCount),
+	OutOfAreaCount #= NewOutOfAreaCount + OutOfAreaValue.
 
-restrictClassArea2([], _, _ ).
-restrictClassArea2([H,T], CurrRow, CurrCol) :-
+restrictClassArea2([H,T], CurrRow, CurrCol, H) :-
 	%write('CurrRow: '), write(CurrRow), nl,
 	%write('CurrCol: '), write(CurrCol), nl,
 	professor(CurrRow, _, ProfArea, _, _),
 	unidadeCurricular(CurrCol, _, ClassArea, _, _),
 	ProfArea \= ClassArea,
 	T #= 0.
-restrictClassArea2([_,T], _, _).
+restrictClassArea2(_, _, _, 0).
+	%H #> 0 #/\ T #> 0.
 
 restrictClassHours([],_,_).
 restrictClassHours([H|T],CurrRow,CurrCol):-
-	unidadeCurricular(CurrRow, _, _, HP, HT),
+	unidadeCurricular(CurrRow, _, ClassArea, HP, HT),
 
 	restrictClassHours1(H,CurrRow,CurrCol,TheoCounter,PracCounter),
 	PracCounter #= HP,
@@ -102,29 +110,33 @@ restrictClassHours1([[P,T]|List],CurrRow,CurrCol,NewTheoCounter,NewPracCounter):
 
 %-------------------------------------------------------------------2º semester
 
-restrictClassAreaSemester2([], _, _,[]).
-restrictClassAreaSemester2([H|T], CurrRow, CurrCol, [Carga | Cargas]) :-
-	restrictClassArea1Semester2(H, CurrRow, CurrCol),
+restrictClassAreaSemester2([], _, _,[], 0).
+restrictClassAreaSemester2([H|T], CurrRow, CurrCol, [Carga | Cargas], OutOfAreaCount) :-
+	restrictClassArea1Semester2(H, CurrRow, CurrCol, OutOfAreaValue),
 	append(H,Hours),
 	NextRow is CurrRow + 1,
-	restrictClassAreaSemester2(T, NextRow, CurrCol, Cargas),
-	sum(Hours, #=, Carga).
+	restrictClassAreaSemester2(T, NextRow, CurrCol, Cargas, NewOutOfAreaCount),
+	sum(Hours, #=, Carga),
+	OutOfAreaCount #= NewOutOfAreaCount + OutOfAreaValue.
 
-restrictClassArea1Semester2([], _, _).
-restrictClassArea1Semester2([H|T], CurrRow, CurrCol) :-
-	restrictClassArea2Semester2(H, CurrRow, CurrCol),
+
+restrictClassArea1Semester2([], _, _, 0).
+restrictClassArea1Semester2([H|T], CurrRow, CurrCol, OutOfAreaCount) :-
+	restrictClassArea2Semester2(H, CurrRow, CurrCol, OutOfAreaValue),
 	NextCol is CurrCol + 1,
-	restrictClassArea1Semester2(T, CurrRow, NextCol).
+	restrictClassArea1Semester2(T, CurrRow, NextCol, NewOutOfAreaCount),
+	OutOfAreaCount #= NewOutOfAreaCount + OutOfAreaValue.
 
-restrictClassArea2Semester2([], _, _ ).
-restrictClassArea2Semester2([H,T], CurrRow, CurrCol) :-
-	write('CurrRow: '), write(CurrRow), nl,
-	write('CurrCol: '), write(CurrCol), nl,
+
+restrictClassArea2Semester2([H,T], CurrRow, CurrCol, H) :-
+	%write('CurrRow: '), write(CurrRow), nl,
+	%write('CurrCol: '), write(CurrCol), nl,
 	professor(CurrRow, _, ProfArea, _, _),
 	unidadeCurricular2(CurrCol, _, ClassArea, _, _),
 	ProfArea \= ClassArea,
 	T #= 0.
-restrictClassArea2Semester2([_,T], _, _).
+restrictClassArea2Semester2(_, _, _, 0).
+	%H #> 0 #/\ T #> 0.
 
 restrictClassHoursSemester2([],_,_).
 restrictClassHoursSemester2([H|T],CurrRow,CurrCol):-
@@ -150,12 +162,30 @@ restrictScheduleBurden([Sem1H | Sem1T], [Sem2H | Sem2T], Number) :-
 	professor(Number, _, _, Type, _),
 	tipoProfessor(Type, _, Carga),
 	NewCarga is Carga * 2,
-	Sem1H + Sem2H #=< NewCarga,
+	Sem1H + Sem2H #= NewCarga,
 	NewNumber is Number + 1,
 	restrictScheduleBurden(Sem1T, Sem2T, NewNumber).
 
 
 %%%%%%%%%%% - END Restriction Theorical
+
+makeIdealHoursList(ProfID, [[HoursFirstSemester, HoursSecondSemester]|T]) :-
+	calculateFirstSemesterHours(ProfID, HoursFirstSemester),
+	calculateSecondSemesterHours(ProfID, HoursSecondSemester),
+	NewID is ProfID + 1,
+	makeIdealHoursList(NewID, T).
+makeIdealHoursList(_, []).
+
+appendHours([], [], []).
+appendHours([H|T], [C|S], [[A, B]|L]) :-
+	A #= 100 * H,
+	B #= 100 * C,
+	appendHours(T, S, L).
+
+countValueHoursDiff([],[], 0).
+countValueHoursDiff([Hg | Tg], [Hi | Ti], Sum) :-
+	countValueHoursDiff(Tg, Ti, NewSum),
+	Sum #= NewSum + abs(Hg - Hi).
 
 teste :-
 	getProfsList(Lprofs),
@@ -184,15 +214,25 @@ teste :-
 	%fd_set(Elem,Set),
 	%fdset_to_list(Set,X),
 	%write(X),nl,
-	restrictClassArea(Sem1, 1, 1, ProfsHours1),
-	restrictClassAreaSemester2(Sem2, 1, 1, ProfsHours2),
+	%trace,
+	restrictClassArea(Sem1, 1, 1, ProfsHours1, OutOfAreaCount1),
+	restrictClassAreaSemester2(Sem2, 1, 1, ProfsHours2, OutOfAreaCount2),
 	%write(ProfHours1), nl,
 	%write(ProfHours2), nl,
 	%trace,
+	write(OutOfAreaCount1), nl,
+	write(OutOfAreaCount2), nl,
 	restrictScheduleBurden(ProfsHours1, ProfsHours2, 1),
-
-
+	appendHours(ProfsHours1, ProfsHours2, GroupedHours),
+	makeIdealHoursList(1, IdealHours),
+	append(GroupedHours, GPH),
+	append(IdealHours, IH),
+	countValueHoursDiff(GPH, IH, ValueMin),
+	ValueToMinimize #= ValueMin + OutOfAreaCount1*100 + OutOfAreaCount2*100,
 	%write(L2),nl,
-	labeling([time_out(8000, _)],TesteLabel),
-	write(Sem1), nl, nl, nl,
+	labeling([time_out(8000, _), minimize(ValueToMinimize)],TesteLabel),
+	%write(ProfsHours1), nl,
+	%write(ProfsHours2), nl,
+	%write(GroupedHours), nl, nl, nl,
+	write(Sem1), nl,
 	write(Sem2),nl.
