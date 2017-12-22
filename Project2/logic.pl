@@ -59,7 +59,6 @@ restrictClassArea([], _, _,[]).
 restrictClassArea([H|T], CurrRow, CurrCol, [Carga | Cargas]) :-
 	restrictClassArea1(H, CurrRow, CurrCol),
 	append(H,Hours),
-	 %valor a usar para otimização - valor de carga semanal de um semestre
 	NextRow is CurrRow + 1,
 	restrictClassArea(T, NextRow, CurrCol, Cargas),
 	sum(Hours, #=, Carga).
@@ -70,8 +69,6 @@ restrictClassArea1([H|T], CurrRow, CurrCol) :-
 	NextCol is CurrCol + 1,
 	restrictClassArea1(T, CurrRow, NextCol).
 
-
-
 restrictClassArea2([], _, _ ).
 restrictClassArea2([H,T], CurrRow, CurrCol) :-
 	%write('CurrRow: '), write(CurrRow), nl,
@@ -81,7 +78,6 @@ restrictClassArea2([H,T], CurrRow, CurrCol) :-
 	ProfArea \= ClassArea,
 	T #= 0.
 restrictClassArea2([_,T], _, _).
-
 
 restrictClassHours([],_,_).
 restrictClassHours([H|T],CurrRow,CurrCol):-
@@ -110,7 +106,6 @@ restrictClassAreaSemester2([], _, _,[]).
 restrictClassAreaSemester2([H|T], CurrRow, CurrCol, [Carga | Cargas]) :-
 	restrictClassArea1Semester2(H, CurrRow, CurrCol),
 	append(H,Hours),
-	 %valor a usar para otimização - valor de carga semanal de um semestre
 	NextRow is CurrRow + 1,
 	restrictClassAreaSemester2(T, NextRow, CurrCol, Cargas),
 	sum(Hours, #=, Carga).
@@ -121,8 +116,6 @@ restrictClassArea1Semester2([H|T], CurrRow, CurrCol) :-
 	NextCol is CurrCol + 1,
 	restrictClassArea1Semester2(T, CurrRow, NextCol).
 
-
-
 restrictClassArea2Semester2([], _, _ ).
 restrictClassArea2Semester2([H,T], CurrRow, CurrCol) :-
 	write('CurrRow: '), write(CurrRow), nl,
@@ -132,7 +125,6 @@ restrictClassArea2Semester2([H,T], CurrRow, CurrCol) :-
 	ProfArea \= ClassArea,
 	T #= 0.
 restrictClassArea2Semester2([_,T], _, _).
-
 
 restrictClassHoursSemester2([],_,_).
 restrictClassHoursSemester2([H|T],CurrRow,CurrCol):-
@@ -152,9 +144,7 @@ restrictClassHours1Semester2([[P,T]|List],CurrRow,CurrCol,NewTheoCounter,NewPrac
 	restrictClassHours1Semester2(List,CurrRow,NextCol,TheoCounter2,PracCounter2),
 	NewPracCounter #= PracCounter2 + P,
 	NewTheoCounter #= TheoCounter2 + T.
-
-
-
+	
 restrictScheduleBurden([], [], _).
 restrictScheduleBurden([Sem1H | Sem1T], [Sem2H | Sem2T], Number) :-
 	professor(Number, _, _, Type, _),

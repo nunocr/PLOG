@@ -32,18 +32,18 @@ areaCientifica(9, 'Inteligencia artifical').
 unidadeCurricular(1, 'Relacoes Publicas'			, 1, 6, 4).
 unidadeCurricular(2, 'Cosmologia'					, 2, 6, 2).
 unidadeCurricular(3, 'Gatologia'					, 3, 4, 3).
-%unidadeCurricular(4, 'Metodos Numericos'			, 7, 6, 4).
-%unidadeCurricular(5, 'Laboratorio de fisica'		, 7, 6, 3).
-%unidadeCurricular(6, 'Probabilidades e Estatistica'	, 4, 4, 1).
-%unidadeCurricular(7, 'Microbiologia'				, 8, 9, 6).
+unidadeCurricular(4, 'Metodos Numericos'			, 7, 6, 4).
+unidadeCurricular(5, 'Laboratorio de fisica'		, 7, 6, 3).
+unidadeCurricular(6, 'Probabilidades e Estatistica'	, 4, 4, 1).
+unidadeCurricular(7, 'Microbiologia'				, 8, 9, 6).
 
 unidadeCurricular2(1, 'Fisica Termica'				, 7, 8, 6).
 unidadeCurricular2(2, 'Fisiologia Animal I'			, 8, 6, 4).
 unidadeCurricular2(3, 'Fisiologia Vegetal'			, 8, 8, 4).
-%unidadeCurricular2(4, 'Metodos de apoio a decisao'	, 4, 6, 2).
-%unidadeCurricular2(5, 'Basquetebol'					, 5, 8, 2).
-%unidadeCurricular2(6, 'Jornais e Revistas'			, 6, 3, 1).
-%unidadeCurricular2(7, 'Astronomia Estelar'			, 2, 9, 4).
+unidadeCurricular2(4, 'Metodos de apoio a decisao'			, 4, 6, 2).
+unidadeCurricular2(5, 'Basquetebol'					, 5, 8, 2).
+unidadeCurricular2(6, 'Jornais e Revistas'			, 6, 3, 1).
+unidadeCurricular2(7, 'Astronomia Estelar'			, 2, 9, 4).
 
 %tipoProfessor(ID, tipo, cargaHoraria)
 tipoProfessor(1, 'catedratico', 7).
