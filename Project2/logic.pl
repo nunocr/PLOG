@@ -5,14 +5,6 @@
 %getProfsList(-List) -> Gets a list of all professors.
 getProfsList(List) :-
 	setof([A, B, C, D, E], professor(A, B, C, D, E), List).
-
-%getFirstSemesterClassesList(-List) -> Gets a list of all first semester classes.
-getFirstSemesterClassesList(List) :-
-	setof([A, B, C, D, E], firstSemesterClass(A, B, C, D, E), List).
-
-%getSecondSemesterClassesList(-List) -> Gets a list of all second semester classes.
-getSecondSemesterClassesList(List) :-
-	setof([A, B, C, D, E], secondSemesterClass(A, B, C, D, E), List).
 	
 %getProfPossibleFirstSemesterClasses(-List) -> Creates a solution list for the first semester classes. Used to create a solution matrix.
 getProfPossibleFirstSemesterClasses(List) :-
@@ -263,7 +255,7 @@ schedule :-
 	%finishes optimization
 	
 	statistics(walltime, _),
-	labeling([time_out(30000, _), minimize(ValueToMinimize)],TesteLabel),
+	labeling([time_out(60000, _), minimize(ValueToMinimize)],TesteLabel),
 	statistics(walltime, [_ | [ExecutionTime]]),
 	
 	write('Readable Solution: '), nl,
