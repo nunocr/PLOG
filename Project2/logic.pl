@@ -70,7 +70,7 @@ restrictClassAreaFirstSemester2(_, _, _, 0).
 %restrictClassHoursFirstSemester(+SolutionMatrix, +CurrClass, +CurrProf) -> Restricts the hours of a class, so all given hours put together doesn't pass the class' limit.
 restrictClassHoursFirstSemester([],_,_).
 restrictClassHoursFirstSemester([H|T],CurrRow,CurrCol):-
-	firstSemesterClass(CurrRow, _, ClassArea, HP, HT),
+	firstSemesterClass(CurrRow, _, _, HP, HT),
 	restrictClassHoursFirstSemester1(H,CurrRow,CurrCol,TheoCounter,PracCounter),
 	PracCounter #= HP,
 	TheoCounter #= HT,
@@ -149,14 +149,14 @@ restrictScheduleBurden([Sem1H | Sem1T], [Sem2H | Sem2T], Number) :-
 
 %calculateFirstSemesterHours(+ProfID, -HoursFirstSemester) -> Calculates the hours wanted by a professor with the given ID. Used to increase efficiency and provides a more accurate solution.
 calculateFirstSemesterHours(ProfID, HoursFirstSemester) :-
-	professor(ProfID, ProfName, _ProfArea, ProfTypeID, ProfDistributionPreference),
+	professor(ProfID, _, _ProfArea, ProfTypeID, ProfDistributionPreference),
 	professorType(ProfTypeID, _, Hours),
 	TotalHours is Hours * 2,
 	HoursFirstSemester is (100 - ProfDistributionPreference) * TotalHours.
 
 %calculateSecondSemesterHours(+ProfID, -HoursSecondSemester) -> Calculates the hours wanted by a professor with the given ID. Used to increase efficiency and provides a more accurate solution.
 calculateSecondSemesterHours(ProfID, HoursSecondSemester) :-
-	professor(ProfID, ProfName, _ProfArea, ProfTypeID, ProfDistributionPreference),
+	professor(ProfID, _, _ProfArea, ProfTypeID, ProfDistributionPreference),
 	professorType(ProfTypeID, _, Hours),
 	TotalHours is Hours * 2,
 	HoursSecondSemester is ProfDistributionPreference * TotalHours.
@@ -191,14 +191,16 @@ printSolution([], _, _).
 printSolution([H|T], CurrProf, 1) :-
 	professor(CurrProf, ProfName, ProfArea, ProfType, _),
 	scientificArea(ProfArea, AreaName),
-	write('Professor '), write(ProfName), write(', which area is '), write(AreaName), write(' will be teaching:'), nl,
+	professorType(ProfType, TypeName, _),
+	write('Professor '), write(ProfName), write(', a '), write(TypeName), write(' which area is '), write(AreaName), write(' will be teaching:'), nl,
 	printFirstSemesterClasses(H, 1), nl,
 	NextProf is CurrProf + 1,
 	printSolution(T, NextProf, 1).
 printSolution([H|T], CurrProf, 2) :-
 	professor(CurrProf, ProfName, ProfArea, ProfType, _),
 	scientificArea(ProfArea, AreaName),
-	write('Professor '), write(ProfName), write(', which area is '), write(AreaName), write(' will be teaching:'), nl,
+	professorType(ProfType, TypeName, _),
+	write('Professor '), write(ProfName), write(', a '), write(TypeName), write(' which area is '), write(AreaName), write(' will be teaching:'), nl,
 	printSecondSemesterClasses(H, 1), nl,
 	NextProf is CurrProf + 1,
 	printSolution(T, NextProf, 2).
@@ -228,8 +230,6 @@ printSecondSemesterClasses([[Practical,Theorical]|T], CurrClass) :-
 schedule :-
 	getProfsList(Lprofs),
 	length(Lprofs, Rows),
-	getFirstSemesterClassesList(Luc1),
-	getSecondSemesterClassesList(Luc2),
 	Rows1 is Rows + 1,
 	createFirstSemesterSolutionMatrix(1, Rows1, Sem1),
 	createSecondSemesterSolutionMatrix(1, Rows1, Sem2),
