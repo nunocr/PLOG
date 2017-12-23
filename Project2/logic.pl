@@ -1,6 +1,6 @@
 :-use_module(library(lists)).
 :-use_module(library(clpfd)).
-:-include('database').
+:-include('databaseLarge').
 
 %getProfsList(-List) -> Gets a list of all professors.
 getProfsList(List) :-
@@ -263,11 +263,8 @@ schedule :-
 	%finishes optimization
 	
 	statistics(walltime, _),
-	labeling([time_out(15000, _), minimize(ValueToMinimize)],TesteLabel),
+	labeling([time_out(30000, _), minimize(ValueToMinimize)],TesteLabel),
 	statistics(walltime, [_ | [ExecutionTime]]),
-	write('Solution Matrix: '), nl,
-	write(Sem1), nl,
-	write(Sem2), nl, nl,
 	
 	write('Readable Solution: '), nl,
 	write('Scheduling for 1st semester'), nl,
@@ -276,6 +273,12 @@ schedule :-
 	
 	write('Scheduling for 2nd semester'), nl,
 	write('---------------------------'), nl,
-	printSolution(Sem2, 1, 2),
+	printSolution(Sem2, 1, 2), nl,
+	
+	write('Solution Matrix: '), nl,
+	write('First Semester: '), nl,
+	write(Sem1), nl, nl,
+	write('Second Semester: '), nl,
+	write(Sem2), nl, nl,
 	
 	write('Execution time: '), write(ExecutionTime), write(' milliseconds.').
