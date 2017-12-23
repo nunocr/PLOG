@@ -55,7 +55,7 @@ restrictClassAreaFirstSemester([H|T], CurrRow, CurrCol, [Carga | Cargas], OutOfA
 
 restrictClassAreaFirstSemester1([], _, _, 0).
 restrictClassAreaFirstSemester1([H|T], CurrRow, CurrCol, OutOfAreaCount) :-
-	restrictClassArea2(H, CurrRow, CurrCol, OutOfAreaValue),
+	restrictClassAreaFirstSemester2(H, CurrRow, CurrCol, OutOfAreaValue),
 	NextCol is CurrCol + 1,
 	restrictClassAreaFirstSemester1(T, CurrRow, NextCol, NewOutOfAreaCount),
 	OutOfAreaCount #= NewOutOfAreaCount + OutOfAreaValue.
@@ -94,7 +94,7 @@ restrictClassHoursFirstSemester1([[P,T]|List],CurrRow,CurrCol,NewTheoCounter,New
 %																											    So, the less hours taught out of the area, better the found solution.
 restrictClassAreaSecondSemester([], _, _,[], 0).
 restrictClassAreaSecondSemester([H|T], CurrRow, CurrCol, [Carga | Cargas], OutOfAreaCount) :-
-	restrictClassArea1Semester2(H, CurrRow, CurrCol, OutOfAreaValue),
+	restrictClassAreaSecondSemester1(H, CurrRow, CurrCol, OutOfAreaValue),
 	append(H,Hours),
 	NextRow is CurrRow + 1,
 	restrictClassAreaSecondSemester(T, NextRow, CurrCol, Cargas, NewOutOfAreaCount),
@@ -103,7 +103,7 @@ restrictClassAreaSecondSemester([H|T], CurrRow, CurrCol, [Carga | Cargas], OutOf
 
 restrictClassAreaSecondSemester1([], _, _, 0).
 restrictClassAreaSecondSemester1([H|T], CurrRow, CurrCol, OutOfAreaCount) :-
-	restrictClassArea2Semester2(H, CurrRow, CurrCol, OutOfAreaValue),
+	restrictClassAreaSecondSemester2(H, CurrRow, CurrCol, OutOfAreaValue),
 	NextCol is CurrCol + 1,
 	restrictClassAreaSecondSemester1(T, CurrRow, NextCol, NewOutOfAreaCount),
 	OutOfAreaCount #= NewOutOfAreaCount + OutOfAreaValue.
