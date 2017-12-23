@@ -183,6 +183,48 @@ countValueHoursDiff([Hg | Tg], [Hi | Ti], Sum) :-
 	countValueHoursDiff(Tg, Ti, NewSum),
 	Sum #= NewSum + abs(Hg - Hi).
 
+%%%%%%%%%%%%%%%%%%
+% PRINT SOLUTION %
+%%%%%%%%%%%%%%%%%%
+
+printSolution([], _, _).
+printSolution([H|T], CurrProf, 1) :-
+	professor(CurrProf, ProfName, ProfArea, ProfType, _),
+	scientificArea(ProfArea, AreaName),
+	write('Professor '), write(ProfName), write(', which area is '), write(AreaName), write(' will be teaching:'), nl,
+	printFirstSemesterClasses(H, 1), nl,
+	NextProf is CurrProf + 1,
+	printSolution(T, NextProf, 1).
+printSolution([H|T], CurrProf, 2) :-
+	professor(CurrProf, ProfName, ProfArea, ProfType, _),
+	scientificArea(ProfArea, AreaName),
+	write('Professor '), write(ProfName), write(', which area is '), write(AreaName), write(' will be teaching:'), nl,
+	printSecondSemesterClasses(H, 1), nl,
+	NextProf is CurrProf + 1,
+	printSolution(T, NextProf, 2).
+	
+printFirstSemesterClasses([], _).
+printFirstSemesterClasses([[Practical,Theorical]|T], CurrClass) :-
+	firstSemesterClass(CurrClass, ClassName, ClassArea, _, _),
+	scientificArea(ClassArea, AreaName),
+	write('        '), write(ClassName), write(' ('), write(AreaName), write(' area)'), write(': '), 
+	write(Practical), write(' hours of practical classes and '), write(Theorical), write(' hours of theorical classes.'), nl,
+	NextClass is CurrClass + 1,
+	printFirstSemesterClasses(T, NextClass).
+	
+printSecondSemesterClasses([], _).
+printSecondSemesterClasses([[Practical,Theorical]|T], CurrClass) :-
+	secondSemesterClass(CurrClass, ClassName, ClassArea, _, _),
+	scientificArea(ClassArea, AreaName),
+	write('        '), write(ClassName), write(' ('), write(AreaName), write(' area)'), write(': '), 
+	write(Practical), write(' hours of practical classes and '), write(Theorical), write(' hours of theorical classes.'), nl,
+	NextClass is CurrClass + 1,
+	printSecondSemesterClasses(T, NextClass).
+
+%%%%%%%%%%%
+% PROGRAM %
+%%%%%%%%%%%
+
 schedule :-
 	getProfsList(Lprofs),
 	length(Lprofs, Rows),
@@ -221,5 +263,15 @@ schedule :-
 	%finishes optimization
 	
 	labeling([time_out(15000, _), minimize(ValueToMinimize)],TesteLabel),
+	write('Solution Matrix: '), nl,
 	write(Sem1), nl,
-	write(Sem2), nl.
+	write(Sem2), nl, nl,
+	
+	write('Readable Solution: '), nl,
+	write('Scheduling for 1st semester'), nl,
+	write('---------------------------'), nl,
+	printSolution(Sem1, 1, 1), nl, nl,
+	
+	write('Scheduling for 2nd semester'), nl,
+	write('---------------------------'), nl,
+	printSolution(Sem2, 1, 2).
