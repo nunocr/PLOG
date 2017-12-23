@@ -1,6 +1,6 @@
 :-use_module(library(lists)).
 :-use_module(library(clpfd)).
-:-include('databaseMedium').
+:-include('databaseSmall').
 
 %getProfsList(-List) -> Gets a list of all professors.
 getProfsList(List) :-
@@ -255,7 +255,7 @@ schedule :-
 	%finishes optimization
 	
 	statistics(walltime, _),
-	labeling([time_out(60000, _), minimize(ValueToMinimize)],TesteLabel),
+	labeling([time_out(10000, _), minimize(ValueToMinimize)],TesteLabel),
 	statistics(walltime, [_ | [ExecutionTime]]),
 	
 	write('Readable Solution: '), nl,
