@@ -1,6 +1,6 @@
 :-use_module(library(lists)).
 :-use_module(library(clpfd)).
-:-include('databaseLarge').
+:-include('databaseMedium').
 
 %getProfsList(-List) -> Gets a list of all professors.
 getProfsList(List) :-
