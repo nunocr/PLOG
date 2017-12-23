@@ -262,7 +262,9 @@ schedule :-
 	ValueToMinimize #= ValueMin + OutOfAreaCount1*100 + OutOfAreaCount2*100, %each value is multiplied by 100 to match the value of ValueMin
 	%finishes optimization
 	
+	statistics(walltime, _),
 	labeling([time_out(15000, _), minimize(ValueToMinimize)],TesteLabel),
+	statistics(walltime, [_ | [ExecutionTime]]),
 	write('Solution Matrix: '), nl,
 	write(Sem1), nl,
 	write(Sem2), nl, nl,
@@ -270,8 +272,10 @@ schedule :-
 	write('Readable Solution: '), nl,
 	write('Scheduling for 1st semester'), nl,
 	write('---------------------------'), nl,
-	printSolution(Sem1, 1, 1), nl, nl,
+	printSolution(Sem1, 1, 1), nl,
 	
 	write('Scheduling for 2nd semester'), nl,
 	write('---------------------------'), nl,
-	printSolution(Sem2, 1, 2).
+	printSolution(Sem2, 1, 2),
+	
+	write('Execution time: '), write(ExecutionTime), write(' milliseconds.').
