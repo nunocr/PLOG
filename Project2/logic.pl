@@ -2,173 +2,166 @@
 :-use_module(library(clpfd)).
 :-include('database').
 
-
-calculateFirstSemesterHours(ProfID, HoursFirstSemester) :-
-	professor(ProfID, ProfName, _ProfArea, ProfTypeID, ProfDistributionPreference),
-	tipoProfessor(ProfTypeID, _, Hours),
-	TotalHours is Hours * 2,
-	HoursFirstSemester is (100 - ProfDistributionPreference) * TotalHours.
-	%HoursSecondSemester is ProfDistributionPreference * TotalHours.
-
-calculateSecondSemesterHours(ProfID, HoursSecondSemester) :-
-	professor(ProfID, ProfName, _ProfArea, ProfTypeID, ProfDistributionPreference),
-	tipoProfessor(ProfTypeID, _, Hours),
-	TotalHours is Hours * 2,
-	HoursSecondSemester is ProfDistributionPreference * TotalHours.
-
+%getProfsList(-List) -> Gets a list of all professors.
 getProfsList(List) :-
 	setof([A, B, C, D, E], professor(A, B, C, D, E), List).
 
-getClassesList(List) :-
-	setof([A, B, C, D, E], unidadeCurricular(A, B, C, D, E), List).
+%getFirstSemesterClassesList(-List) -> Gets a list of all first semester classes.
+getFirstSemesterClassesList(List) :-
+	setof([A, B, C, D, E], firstSemesterClass(A, B, C, D, E), List).
 
-getClassesList2(List) :-
-	setof([A, B, C, D, E], unidadeCurricular2(A, B, C, D, E), List).
+%getSecondSemesterClassesList(-List) -> Gets a list of all second semester classes.
+getSecondSemesterClassesList(List) :-
+	setof([A, B, C, D, E], secondSemesterClass(A, B, C, D, E), List).
+	
+%getProfPossibleFirstSemesterClasses(-List) -> Creates a solution list for the first semester classes. Used to create a solution matrix.
+getProfPossibleFirstSemesterClasses(List) :-
+	findall([_, _], firstSemesterClass(_A, _B, _C, _D, _E), List).
 
-getProfPossibleClasses1(List) :-
-	findall([_, _], unidadeCurricular(_A, _B, _C, _D, _E), List).
+%getProfPossibleSecondSemesterClasses(-List) -> Creates a solution list for the second semester classes. Used to create a solution matrix.
+getProfPossibleSecondSemesterClasses(List) :-
+	findall([_, _], secondSemesterClass(_A, _B, _C, _D, _E), List).
 
-getProfPossibleClasses2(List) :-
-	findall([_, _], unidadeCurricular2(_A, _B, _C, _D, _E), List).
-
-printPossibleClasses(Rows, Rows, []).
-printPossibleClasses(CurrID, MaxID, [H|T]) :-
-	getProfPossibleClasses1(H),
+%createFirstSemesterSolutionMatrix(+CurrID, +MaxID, -List) -> Creates the solution matrix, calling the function getProfPossibleFirstSemesterClasses() for each professor.
+createFirstSemesterSolutionMatrix(Rows, Rows, []).
+createFirstSemesterSolutionMatrix(CurrID, MaxID, [H|T]) :-
+	getProfPossibleFirstSemesterClasses(H),
 	NextID is CurrID + 1,
-	printPossibleClasses(NextID, MaxID, T).
+	createFirstSemesterSolutionMatrix(NextID, MaxID, T).
 
-printPossibleClasses2(Rows, Rows, []).
-printPossibleClasses2(CurrID, MaxID, [H|T]) :-
-	getProfPossibleClasses2(H),
+%createFirstSemesterSolutionMatrix(+CurrID, +MaxID, -List) -> Creates the solution matrix, calling the function getProfPossibleSecondSemesterClasses() for each professor.
+createSecondSemesterSolutionMatrix(Rows, Rows, []).
+createSecondSemesterSolutionMatrix(CurrID, MaxID, [H|T]) :-
+	getProfPossibleSecondSemesterClasses(H),
 	NextID is CurrID + 1,
-	printPossibleClasses2(NextID, MaxID, T).
+	createSecondSemesterSolutionMatrix(NextID, MaxID, T).
 
-getTotalClassHours(ClassID, PracticalHours, TheoricalHours) :-
-	unidadeCurricular(ClassID, _, _, _, PracticalHoursList, TheoricalHoursList),
-	sumlist(PracticalHoursList, TotalPracticalHours),
-	sumlist(TheoricalHoursList, TotalTheoricalHours).
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% FIRST SEMESTER RESTRICTIONS %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-getMinPracticalClassTime(ClassID, MinTime) :-
-	unidadeCurricular(ClassID, _, _, _, PracticalHoursList, _),
-	min_list(PracticalHoursList, MinTime).
-
-getMinTheoricalClassTime(ClassID, MinTime) :-
-	unidadeCurricular(ClassID, _, _, _, _, TheoricalHoursList),
-	min_list(TheoricalHoursList, MinTime).
-
-
-%%%%%%%%%%% - Restriction Theorical
-
-% [Pratical, Theoretical]
-
-restrictClassArea([], _, _, [], 0).
-restrictClassArea([H|T], CurrRow, CurrCol, [Carga | Cargas], OutOfAreaCount) :-
-	restrictClassArea1(H, CurrRow, CurrCol, OutOfAreaValue),
+%restrictClassAreaFirstSemester(+SolutionMatrix, +CurrProf, +CurrClass, -ProfHours, -HoursOutOfAreaCounter) -> Restricts the professor's scheduling on the first semester classes, 
+%																											   returning his hours spent teaching (can't teach more hours than what he signed for).
+%																											   Also returns a counter used for efficiency, because it's preferred that practical classes are taught by a same area professor.
+%																											   So, the less hours taught out of the area, better the found solution.
+restrictClassAreaFirstSemester([], _, _, [], 0).
+restrictClassAreaFirstSemester([H|T], CurrRow, CurrCol, [Carga | Cargas], OutOfAreaCount) :-
+	restrictClassAreaFirstSemester1(H, CurrRow, CurrCol, OutOfAreaValue),
 	append(H,Hours),
 	NextRow is CurrRow + 1,
-	restrictClassArea(T, NextRow, CurrCol, Cargas, NewOutOfAreaCount),
+	restrictClassAreaFirstSemester(T, NextRow, CurrCol, Cargas, NewOutOfAreaCount),
 	sum(Hours, #=, Carga),
 	OutOfAreaCount #= NewOutOfAreaCount + OutOfAreaValue.
 
-restrictClassArea1([], _, _, 0).
-restrictClassArea1([H|T], CurrRow, CurrCol, OutOfAreaCount) :-
+restrictClassAreaFirstSemester1([], _, _, 0).
+restrictClassAreaFirstSemester1([H|T], CurrRow, CurrCol, OutOfAreaCount) :-
 	restrictClassArea2(H, CurrRow, CurrCol, OutOfAreaValue),
 	NextCol is CurrCol + 1,
-	restrictClassArea1(T, CurrRow, NextCol, NewOutOfAreaCount),
+	restrictClassAreaFirstSemester1(T, CurrRow, NextCol, NewOutOfAreaCount),
 	OutOfAreaCount #= NewOutOfAreaCount + OutOfAreaValue.
 
-restrictClassArea2([H,T], CurrRow, CurrCol, H) :-
-	%write('CurrRow: '), write(CurrRow), nl,
-	%write('CurrCol: '), write(CurrCol), nl,
+restrictClassAreaFirstSemester2([H,T], CurrRow, CurrCol, H) :-
 	professor(CurrRow, _, ProfArea, _, _),
-	unidadeCurricular(CurrCol, _, ClassArea, _, _),
+	firstSemesterClass(CurrCol, _, ClassArea, _, _),
 	ProfArea \= ClassArea,
-	T #= 0.
-restrictClassArea2(_, _, _, 0).
-	%H #> 0 #/\ T #> 0.
+	T #= 0. %if a prof is not of the area, cant teach theorical classes.
+restrictClassAreaFirstSemester2(_, _, _, 0).
 
-restrictClassHours([],_,_).
-restrictClassHours([H|T],CurrRow,CurrCol):-
-	unidadeCurricular(CurrRow, _, ClassArea, HP, HT),
-
-	restrictClassHours1(H,CurrRow,CurrCol,TheoCounter,PracCounter),
+%restrictClassHoursFirstSemester(+SolutionMatrix, +CurrClass, +CurrProf) -> Restricts the hours of a class, so all given hours put together doesn't pass the class' limit.
+restrictClassHoursFirstSemester([],_,_).
+restrictClassHoursFirstSemester([H|T],CurrRow,CurrCol):-
+	firstSemesterClass(CurrRow, _, ClassArea, HP, HT),
+	restrictClassHoursFirstSemester1(H,CurrRow,CurrCol,TheoCounter,PracCounter),
 	PracCounter #= HP,
 	TheoCounter #= HT,
-
 	NextRow is CurrRow + 1,
-	restrictClassHours(T,NextRow,CurrCol).
+	restrictClassHoursFirstSemester(T,NextRow,CurrCol).
 
-%[Prof1,Prof2]
-restrictClassHours1([],_,_,0,0).
-restrictClassHours1([[P,T]|List],CurrRow,CurrCol,NewTheoCounter,NewPracCounter):-
+restrictClassHoursFirstSemester1([],_,_,0,0).
+restrictClassHoursFirstSemester1([[P,T]|List],CurrRow,CurrCol,NewTheoCounter,NewPracCounter):-
 	NextCol is CurrCol + 1,
-	restrictClassHours1(List,CurrRow,NextCol,TheoCounter2,PracCounter2),
+	restrictClassHoursFirstSemester1(List,CurrRow,NextCol,TheoCounter2,PracCounter2),
 	NewPracCounter #= PracCounter2 + P,
 	NewTheoCounter #= TheoCounter2 + T.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SECOND SEMESTER RESTRICTIONS %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-%-------------------------------------------------------------------2º semester
-
-restrictClassAreaSemester2([], _, _,[], 0).
-restrictClassAreaSemester2([H|T], CurrRow, CurrCol, [Carga | Cargas], OutOfAreaCount) :-
+%restrictClassAreaSecondSemester(+SolutionMatrix, +CurrProf, +CurrClass, -ProfHours, -HoursOutOfAreaCounter) -> Restricts the professor's scheduling on the second semester classes, 
+%																											    returning his hours spent teaching (can't teach more hours than what he signed for).
+%																											    Also returns a counter used for efficiency, because it's preferred that practical classes are taught by a same area professor.
+%																											    So, the less hours taught out of the area, better the found solution.
+restrictClassAreaSecondSemester([], _, _,[], 0).
+restrictClassAreaSecondSemester([H|T], CurrRow, CurrCol, [Carga | Cargas], OutOfAreaCount) :-
 	restrictClassArea1Semester2(H, CurrRow, CurrCol, OutOfAreaValue),
 	append(H,Hours),
 	NextRow is CurrRow + 1,
-	restrictClassAreaSemester2(T, NextRow, CurrCol, Cargas, NewOutOfAreaCount),
+	restrictClassAreaSecondSemester(T, NextRow, CurrCol, Cargas, NewOutOfAreaCount),
 	sum(Hours, #=, Carga),
 	OutOfAreaCount #= NewOutOfAreaCount + OutOfAreaValue.
 
-
-restrictClassArea1Semester2([], _, _, 0).
-restrictClassArea1Semester2([H|T], CurrRow, CurrCol, OutOfAreaCount) :-
+restrictClassAreaSecondSemester1([], _, _, 0).
+restrictClassAreaSecondSemester1([H|T], CurrRow, CurrCol, OutOfAreaCount) :-
 	restrictClassArea2Semester2(H, CurrRow, CurrCol, OutOfAreaValue),
 	NextCol is CurrCol + 1,
-	restrictClassArea1Semester2(T, CurrRow, NextCol, NewOutOfAreaCount),
+	restrictClassAreaSecondSemester1(T, CurrRow, NextCol, NewOutOfAreaCount),
 	OutOfAreaCount #= NewOutOfAreaCount + OutOfAreaValue.
 
-
-restrictClassArea2Semester2([H,T], CurrRow, CurrCol, H) :-
-	%write('CurrRow: '), write(CurrRow), nl,
-	%write('CurrCol: '), write(CurrCol), nl,
+restrictClassAreaSecondSemester2([H,T], CurrRow, CurrCol, H) :-
 	professor(CurrRow, _, ProfArea, _, _),
-	unidadeCurricular2(CurrCol, _, ClassArea, _, _),
+	secondSemesterClass(CurrCol, _, ClassArea, _, _),
 	ProfArea \= ClassArea,
 	T #= 0.
-restrictClassArea2Semester2(_, _, _, 0).
-	%H #> 0 #/\ T #> 0.
+restrictClassAreaSecondSemester2(_, _, _, 0).
 
-restrictClassHoursSemester2([],_,_).
-restrictClassHoursSemester2([H|T],CurrRow,CurrCol):-
-	unidadeCurricular2(CurrRow, _, _, HP, HT),
+%restrictClassHoursSecondSemester(+SolutionMatrix, +CurrClass, +CurrProf) -> Restricts the hours of a class, so all given hours put together doesn't pass the class' limit.
+restrictClassHoursSecondSemester([],_,_).
+restrictClassHoursSecondSemester([H|T],CurrRow,CurrCol):-
+	secondSemesterClass(CurrRow, _, _, HP, HT),
 
-	restrictClassHours1Semester2(H,CurrRow,CurrCol,TheoCounter,PracCounter),
+	restrictClassHoursSecondSemester1(H,CurrRow,CurrCol,TheoCounter,PracCounter),
 	PracCounter #= HP,
 	TheoCounter #= HT,
 
 	NextRow is CurrRow + 1,
-	restrictClassHoursSemester2(T,NextRow,CurrCol).
+	restrictClassHoursSecondSemester(T,NextRow,CurrCol).
 
-%[Prof1,Prof2]
-restrictClassHours1Semester2([],_,_,0,0).
-restrictClassHours1Semester2([[P,T]|List],CurrRow,CurrCol,NewTheoCounter,NewPracCounter):-
+restrictClassHoursSecondSemester1([],_,_,0,0).
+restrictClassHoursSecondSemester1([[P,T]|List],CurrRow,CurrCol,NewTheoCounter,NewPracCounter):-
 	NextCol is CurrCol + 1,
-	restrictClassHours1Semester2(List,CurrRow,NextCol,TheoCounter2,PracCounter2),
+	restrictClassHoursSecondSemester1(List,CurrRow,NextCol,TheoCounter2,PracCounter2),
 	NewPracCounter #= PracCounter2 + P,
 	NewTheoCounter #= TheoCounter2 + T.
 	
 restrictScheduleBurden([], [], _).
 restrictScheduleBurden([Sem1H | Sem1T], [Sem2H | Sem2T], Number) :-
 	professor(Number, _, _, Type, _),
-	tipoProfessor(Type, _, Carga),
+	professorType(Type, _, Carga),
 	NewCarga is Carga * 2,
 	Sem1H + Sem2H #= NewCarga,
 	NewNumber is Number + 1,
 	restrictScheduleBurden(Sem1T, Sem2T, NewNumber).
 
+%%%%%%%%%%%%%%%%%
+% OPTIMIZATIONS %
+%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%% - END Restriction Theorical
+%calculateFirstSemesterHours(+ProfID, -HoursFirstSemester) -> Calculates the hours wanted by a professor with the given ID. Used to increase efficiency and provides a more accurate solution.
+calculateFirstSemesterHours(ProfID, HoursFirstSemester) :-
+	professor(ProfID, ProfName, _ProfArea, ProfTypeID, ProfDistributionPreference),
+	professorType(ProfTypeID, _, Hours),
+	TotalHours is Hours * 2,
+	HoursFirstSemester is (100 - ProfDistributionPreference) * TotalHours.
 
+%calculateSecondSemesterHours(+ProfID, -HoursSecondSemester) -> Calculates the hours wanted by a professor with the given ID. Used to increase efficiency and provides a more accurate solution.
+calculateSecondSemesterHours(ProfID, HoursSecondSemester) :-
+	professor(ProfID, ProfName, _ProfArea, ProfTypeID, ProfDistributionPreference),
+	professorType(ProfTypeID, _, Hours),
+	TotalHours is Hours * 2,
+	HoursSecondSemester is ProfDistributionPreference * TotalHours.
+
+%makeIdealHoursList(+ProfID, -IdealHoursList) -> Gets the preferred schedule for professors. Used to compare to current solution to find a better solution.
 makeIdealHoursList(ProfID, [[HoursFirstSemester, HoursSecondSemester]|T]) :-
 	calculateFirstSemesterHours(ProfID, HoursFirstSemester),
 	calculateSecondSemesterHours(ProfID, HoursSecondSemester),
@@ -176,63 +169,57 @@ makeIdealHoursList(ProfID, [[HoursFirstSemester, HoursSecondSemester]|T]) :-
 	makeIdealHoursList(NewID, T).
 makeIdealHoursList(_, []).
 
+%appendHours(+FirstSemesterHours, +SecondSemesterHours, -GroupedHours) -> Groups current solution professor hours, to compare to a list of ideal hours, in order to find a better solution.
+%																		  Everything is multiplied by 100 to avoid decimals.
 appendHours([], [], []).
 appendHours([H|T], [C|S], [[A, B]|L]) :-
 	A #= 100 * H,
 	B #= 100 * C,
 	appendHours(T, S, L).
 
+%countValueHoursDiff(+CurrentHours, +IdealHours, -EfficiencyValue) -> Subtracts the current solution hours to the ideal one, so it gives the current efficiency value. The lower this value, the better the solution.
 countValueHoursDiff([],[], 0).
 countValueHoursDiff([Hg | Tg], [Hi | Ti], Sum) :-
 	countValueHoursDiff(Tg, Ti, NewSum),
 	Sum #= NewSum + abs(Hg - Hi).
 
-teste :-
+schedule :-
 	getProfsList(Lprofs),
 	length(Lprofs, Rows),
-	getClassesList(Luc1),
-	getClassesList2(Luc2),
+	getFirstSemesterClassesList(Luc1),
+	getSecondSemesterClassesList(Luc2),
 	Rows1 is Rows + 1,
-	printPossibleClasses(1, Rows1, Sem1),
-	printPossibleClasses2(1, Rows1, Sem2),
-
+	createFirstSemesterSolutionMatrix(1, Rows1, Sem1),
+	createSecondSemesterSolutionMatrix(1, Rows1, Sem2),
+	%Solution matrix done, each row is a professor and each column is a class.
+	
 	transpose(Sem1, Ucs1),
 	transpose(Sem2, Ucs2),
-
-
 	append(Ucs1,TesteLabel1),
 	append(TesteLabel1,TesteLabel12),
 	append(Ucs2,TesteLabel2),
 	append(TesteLabel2,TesteLabel22),
 	append(TesteLabel12, TesteLabel22, TesteLabel),
+	%Flattens the transposed solution, so each row is a class and each column is a professor.
+	
+	%starts restrictions
 	domain(TesteLabel,0,9),
-	%nth1(1,TesteLabel2,Elem),
-
-	%trace,
-	restrictClassHours(Ucs1, 1, 1),
-	restrictClassHoursSemester2(Ucs2, 1, 1),
-	%fd_set(Elem,Set),
-	%fdset_to_list(Set,X),
-	%write(X),nl,
-	%trace,
-	restrictClassArea(Sem1, 1, 1, ProfsHours1, OutOfAreaCount1),
-	restrictClassAreaSemester2(Sem2, 1, 1, ProfsHours2, OutOfAreaCount2),
-	%write(ProfHours1), nl,
-	%write(ProfHours2), nl,
-	%trace,
-	write(OutOfAreaCount1), nl,
-	write(OutOfAreaCount2), nl,
+	restrictClassHoursFirstSemester(Ucs1, 1, 1),
+	restrictClassHoursSecondSemester(Ucs2, 1, 1),
+	restrictClassAreaFirstSemester(Sem1, 1, 1, ProfsHours1, OutOfAreaCount1),
+	restrictClassAreaSecondSemester(Sem2, 1, 1, ProfsHours2, OutOfAreaCount2),
 	restrictScheduleBurden(ProfsHours1, ProfsHours2, 1),
+	%finishes restrictions
+	
+	%starts optimization
 	appendHours(ProfsHours1, ProfsHours2, GroupedHours),
 	makeIdealHoursList(1, IdealHours),
 	append(GroupedHours, GPH),
 	append(IdealHours, IH),
 	countValueHoursDiff(GPH, IH, ValueMin),
-	ValueToMinimize #= ValueMin + OutOfAreaCount1*100 + OutOfAreaCount2*100,
-	%write(L2),nl,
-	labeling([time_out(8000, _), minimize(ValueToMinimize)],TesteLabel),
-	%write(ProfsHours1), nl,
-	%write(ProfsHours2), nl,
-	%write(GroupedHours), nl, nl, nl,
+	ValueToMinimize #= ValueMin + OutOfAreaCount1*100 + OutOfAreaCount2*100, %each value is multiplied by 100 to match the value of ValueMin
+	%finishes optimization
+	
+	labeling([time_out(15000, _), minimize(ValueToMinimize)],TesteLabel),
 	write(Sem1), nl,
-	write(Sem2),nl.
+	write(Sem2), nl.
